@@ -19,7 +19,9 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<Circuit> {
     }
     getChildren(element?: Circuit | undefined): vscode.ProviderResult<Circuit[]> {
         return Promise.resolve([
-            new Circuit(new CircuitSource(vscode.Uri.parse("/Users/gavi/Downloads/axiom-repl-starter/src/components/axiom/circuit/circuit.ts"), "circuit")),
+            new Circuit(
+                new CircuitSource(vscode.Uri.parse("/Users/gavi/Downloads/axiom-repl-starter/src/components/axiom/circuit/circuit.ts"), "circuit")
+            ),
         ]);
     }
 }

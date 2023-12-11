@@ -9,5 +9,8 @@ export class Circuit {
 }
 
 export class CircuitSource {
-    constructor(public file: vscode.Uri, public functionName: string) {};
+    // could replace this with ts.FunctionDeclaration, which has all this info.
+    // getLineAndCharacterOfPosition converts from absolute position
+    // fileName may have the full path, not sure
+    constructor(public filePath: vscode.Uri, public functionName: string) {};
 }
