@@ -14,10 +14,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "axiom-crypto.helloWorld",
-        "title": "Hello World"
+        "command": "axiom-crypto.compile",
+        "title": "Compile Axiom Circuit"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "axiom-circuits",
+          "name": "Axiom Circuits"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
