@@ -22,6 +22,11 @@
         "command": "axiom-crypto.compile-all",
         "title": "Compile All Circuits",
         "icon": "$(circuit-board)"
+      },
+      {
+        "command": "axiom-crypto.run",
+        "title": "Run Circuit",
+        "icon": "$(run)"
       }
     ],
     "views": {
@@ -43,8 +48,13 @@
       "view/item/context": [
         {
           "command": "axiom-crypto.compile",
-          "group": "inline",
-          "when": "viewItem != error"
+          "group": "inline@1",
+          "when": "view == axiom-circuits"
+        },
+        {
+          "command": "axiom-crypto.run",
+          "group": "inline@2",
+          "when": "view == axiom-circuits"
         }
       ]
     }
