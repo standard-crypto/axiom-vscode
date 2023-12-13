@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { run } from '@axiom-crypto/circuit';
 import { Circuit } from '../models/circuit';
 
 export const COMMAND_ID_RUN = 'axiom-crypto.run';
@@ -15,18 +16,14 @@ export class Run implements vscode.Disposable {
                 console.log('Run', circuit);
                 vscode.window.showInformationMessage('Run');
 
-                const terminal = vscode.window.createTerminal({
-                    name: "Axiom",
+                await run(circuit.source.filePath.fsPath, {
+                    stats: false,
+                    function: circuit.source.functionName,
+                    build: circuit.buildPath.fsPath,
+                    output: circuit.outputPath.fsPath,
+                    inputs: args?.inputFilePath?.fsPath,
+                    provider: args?.rpcProvider,
                 });
-                
-                let cmd = `npx axiom run ${circuit.source.filePath.fsPath} --function ${circuit.source.functionName}`;
-                if (args?.inputFilePath !== undefined) {
-                    cmd += ` --inputs ${args.inputFilePath.fsPath}`;
-                }
-                if (args?.rpcProvider !== undefined) {
-                    cmd += ` --provider ${args.rpcProvider}`;
-                }
-                terminal.sendText(cmd);
             }),
         );
     }

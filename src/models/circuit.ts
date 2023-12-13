@@ -5,7 +5,11 @@ export class Circuit {
         return this.source.functionName;
     }
 
-    constructor(public source: CircuitSource) {}
+    constructor(
+        public source: CircuitSource,
+        public buildPath: vscode.Uri,
+        public outputPath: vscode.Uri,
+    ) {}
 }
 
 export class CircuitSource {
