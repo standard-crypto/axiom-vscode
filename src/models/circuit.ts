@@ -1,15 +1,18 @@
 import * as vscode from 'vscode';
+import type { Query } from "./query";
 
 export class Circuit {
-    get name(): string {
-        return this.source.functionName;
-    }
-
+    public queries: Query[] = [];
+    
     constructor(
         public source: CircuitSource,
         public buildPath: vscode.Uri,
-        public outputPath: vscode.Uri,
+        public defaultInputs: vscode.Uri,
     ) {}
+
+    get name(): string {
+        return this.source.functionName;
+    }
 }
 
 export class CircuitSource {

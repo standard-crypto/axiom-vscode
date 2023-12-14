@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { compile } from '@axiom-crypto/circuit';
 import { Circuit } from '../models/circuit';
 
 export const COMMAND_ID_COMPILE = 'axiom-crypto.compile';
@@ -10,10 +11,12 @@ export class Compile implements vscode.Disposable {
                 console.log('Compile', circuit);
                 vscode.window.showInformationMessage('Compile');
 
-                const terminal = vscode.window.createTerminal({
-                    name: "Axiom",
+                await compile(circuit.source.filePath.fsPath, {
+                    stats: false,
+                    function: circuit.source.functionName,
+                    inputs: circuit.defaultInputs.fsPath,
+                    output: circuit.buildPath.fsPath,
                 });
-                terminal.sendText(`npx axiom compile ${circuit.source.filePath.fsPath} --function ${circuit.source.functionName}`);
             }),
         );
     }

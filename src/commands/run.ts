@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { run } from '@axiom-crypto/circuit';
-import { Circuit } from '../models/circuit';
+import type { Query } from '../models/query';
 
 export const COMMAND_ID_RUN = 'axiom-crypto.run';
 
@@ -12,17 +12,17 @@ export interface RunArgs {
 export class Run implements vscode.Disposable {
     constructor(private context: vscode.ExtensionContext) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_RUN, async (circuit: Circuit, args?: RunArgs) => {
-                console.log('Run', circuit);
+            vscode.commands.registerCommand(COMMAND_ID_RUN, async (query: Query) => {
+                console.log('Run', query);
                 vscode.window.showInformationMessage('Run');
 
-                await run(circuit.source.filePath.fsPath, {
+                await run(query.circuit.source.filePath.fsPath, {
                     stats: false,
-                    function: circuit.source.functionName,
-                    build: circuit.buildPath.fsPath,
-                    output: circuit.outputPath.fsPath,
-                    inputs: args?.inputFilePath?.fsPath,
-                    provider: args?.rpcProvider,
+                    function: query.circuit.source.functionName,
+                    build: query.circuit.buildPath.fsPath,
+                    output: query.outputPath.fsPath,
+                    inputs: query.inputPath.fsPath,
+                    // provider: args?.rpcProvider,
                 });
             }),
         );

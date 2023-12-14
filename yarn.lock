@@ -12,11 +12,25 @@
   resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.10.0.tgz#d2a39395c587e092d77cbbc80acf956a54f38bf7"
   integrity sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==
 
-"@axiom-crypto/circuit@^0.1.3":
+"@axiom-crypto/circuit@0.1.3", "@axiom-crypto/circuit@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@axiom-crypto/circuit/-/circuit-0.1.3.tgz#616e34a408089d03066b823d52c708af1f58c734"
   integrity sha512-bUiRThj/6+WqMCq8vqBtolt1R7tJuJhlAZLcUIk1YzbXeTgR6ikz2CiY33yf8hJKxeaNY9fqjT3JgIxu38Z2SA==
   dependencies:
+    "@axiom-crypto/core" "^2.2.50"
+    "@axiom-crypto/halo2-lib-js" "0.2.13-alpha.1"
+    "@axiom-crypto/halo2-wasm" "0.2.10"
+    "@axiom-crypto/tools" "^0.3.33"
+    commander "^11.1.0"
+    ethers "^6.8.1"
+    viem "^1.19.9"
+
+"@axiom-crypto/client@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/client/-/client-0.1.3.tgz#dbd9a68aa518234ed42ff477d560789b457d8b6d"
+  integrity sha512-w4Adh+EW11n66zm16xTgIyZi6OoG63lSK8QUCtt1UlIgMgTtEFdXKl/LWtpOI5m1D7rnO4IBzIUpK9/zHTZohQ==
+  dependencies:
+    "@axiom-crypto/circuit" "0.1.3"
     "@axiom-crypto/core" "^2.2.50"
     "@axiom-crypto/halo2-lib-js" "0.2.13-alpha.1"
     "@axiom-crypto/halo2-wasm" "0.2.10"
@@ -823,7 +837,7 @@ ethereum-cryptography@^2.0.0, ethereum-cryptography@^2.1.2:
     "@scure/bip32" "1.3.1"
     "@scure/bip39" "1.2.1"
 
-ethers@^6.7.0, ethers@^6.8.0, ethers@^6.8.1:
+ethers@^6.7.0, ethers@^6.8.0, ethers@^6.8.1, ethers@^6.9.0:
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.9.0.tgz#a4534bdcdfde306aee94ef32f3d5c70d7e33fcb9"
   integrity sha512-pmfNyQzc2mseLe91FnT2vmNaTt8dDzhxZ/xItAV7uGsF4dI4ek2ufMu3rAkgQETL/TIs0GS5A+U05g9QyWnv3Q==
