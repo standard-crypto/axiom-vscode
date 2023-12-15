@@ -31,6 +31,6 @@ export class Query {
     }
 
     get name(): string {
-        return "stub query name";
+        return path.basename(this.inputPath.fsPath, path.extname(this.inputPath.fsPath));
     }
 }

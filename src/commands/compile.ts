@@ -9,14 +9,27 @@ export class Compile implements vscode.Disposable {
         this.context.subscriptions.push(
             vscode.commands.registerCommand(COMMAND_ID_COMPILE, async (circuit: Circuit) => {
                 console.log('Compile', circuit);
-                vscode.window.showInformationMessage('Compile');
 
-                await compile(circuit.source.filePath.fsPath, {
-                    stats: false,
-                    function: circuit.source.functionName,
-                    inputs: circuit.defaultInputs.fsPath,
-                    output: circuit.buildPath.fsPath,
-                });
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Axiom",
+                    cancellable: false
+                }, async (progress) => {
+                    progress.report({ increment: 0, message: "Compiling circuit..." });       
+                    
+        
+                    await compile(circuit.source.filePath.fsPath, {
+                        stats: false,
+                        function: circuit.source.functionName,
+                        inputs: circuit.defaultInputs.fsPath,
+                        output: circuit.buildPath.fsPath,
+                    });
+
+                    progress.report({increment: 100, message: `Saved to ${vscode.workspace.asRelativePath(circuit.buildPath)}`});
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 5000);
+                    });
+                });                
             }),
         );
     }
