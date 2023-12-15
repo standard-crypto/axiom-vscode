@@ -9,22 +9,6 @@ import { JsonRpcProvider, Transaction } from 'ethers';
 
 export const COMMAND_ID_SEND_QUERY = 'axiom-crypto.send-query';
 
-// TODO: fetch from extension settings instead
-function getProvider(provider: string | undefined): string {
-    const home = os.homedir();
-    const axiomProviderPath = path.join(home, '.axiom', 'provider.json');
-    const folderPath = path.dirname(axiomProviderPath);
-    const exists = fs.existsSync(axiomProviderPath);
-    if (!exists && !provider) {
-        throw new Error("Must set a provider");
-    }
-    const providerToUse = provider || readJsonFromFile(axiomProviderPath).provider;
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath, { recursive: true });
-    }
-    fs.writeFileSync(axiomProviderPath, JSON.stringify({ provider: providerToUse }));
-    return providerToUse;
-}
 function readJsonFromFile(relativePath: string) {
     return JSON.parse(fs.readFileSync(path.resolve(relativePath), 'utf8'));
 }
@@ -36,7 +20,13 @@ export class SendQuery implements vscode.Disposable {
                 console.log('Send Query', query);
                 vscode.window.showInformationMessage('Send Query');
 
-                const provider = getProvider(undefined);
+                // make sure provider is set
+                const provider:string = vscode.workspace.getConfiguration().get('axiomProviderUri') ?? '';
+                if (provider.length === 0){
+                    vscode.window.showErrorMessage('You must set a provider URI before compiling');
+                    return;
+                }
+
                 const chainId = 5; // TODO: receive from config
 
                 const axiom = new Axiom({
