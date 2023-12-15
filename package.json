@@ -30,6 +30,7 @@
           "axiomOutputFolder": {
 						"type": "string",
 						"description": "Axiom Output Folder",
+            "default": "data",
 						"editPresentation": "singlelineText"
 					}
 				}
