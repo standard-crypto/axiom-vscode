@@ -22,19 +22,32 @@ class QueryTreeItem extends vscode.TreeItem {
     constructor(private query: Query) {
         super(query.name);
         this.contextValue = "query";
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.description = vscode.workspace.asRelativePath(query.inputPath);
     }
 }
 
-class CircuitsDataProvider implements vscode.TreeDataProvider<Circuit | Query> {
-    getTreeItem(element: Circuit | Query): vscode.TreeItem | Thenable<vscode.TreeItem> {
+class CallbackAddrTreeItem extends vscode.TreeItem {
+    constructor(private address: string) {
+        super("Callback: ");
+        this.contextValue = "callbackAddress";
+        this.description = address;
+    }
+}
+
+type TreeElem = Circuit | Query | {address: string};
+
+class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
+    getTreeItem(element: TreeElem): vscode.TreeItem | Thenable<vscode.TreeItem> {
         if (element instanceof Circuit) {
             return new CircuitTreeItem(element);
+        } else if ('address' in element) {
+            return new CallbackAddrTreeItem(element.address);
         } else {
             return new QueryTreeItem(element);
         }
     }
-    getChildren(element?: Circuit | Query | undefined): vscode.ProviderResult<Array<Circuit | Query>> {
+    getChildren(element?: Circuit | Query | undefined): vscode.ProviderResult<Array<TreeElem>> {
         if (element === undefined) {
             const circuit = new Circuit(
                 new CircuitSource(vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/axiom/circuit.ts"), "nonceIncrementor"),
@@ -54,7 +67,7 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<Circuit | Query> {
         } else if (element instanceof Circuit) {
             return element.queries;
         } else if (element instanceof Query) {
-            return [];
+            return [{address: element.callbackAddress}];
         }
     }
 }
