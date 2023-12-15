@@ -12,6 +12,30 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": [
+      {
+				"id": "axiom",
+				"title": "Axiom",
+				"properties": {
+					"axiomProviderUri": {
+						"type": "string",
+						"description": "Axiom Provider URI",
+						"editPresentation": "singlelineText"
+					},
+          "axiomPrivateKey": {
+						"type": "string",
+						"description": "Axiom Private Key",
+						"editPresentation": "singlelineText"
+					},
+          "axiomOutputFolder": {
+						"type": "string",
+						"description": "Axiom Output Folder",
+            "default": "data",
+						"editPresentation": "singlelineText"
+					}
+				}
+			}
+    ],
     "commands": [
       {
         "command": "axiom-crypto.compile",
@@ -37,6 +61,21 @@
         "command": "axiom-crypto.run",
         "title": "Run Circuit",
         "icon": "$(run)"
+      },
+      {
+        "command": "axiom-crypto.set-provider-uri",
+        "title": "Configure Provider URI",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "axiom-crypto.set-private-key",
+        "title": "Configure Private Key",
+        "icon": "$(key)"
+      },
+      {
+        "command": "axiom-crypto.set-output-folder",
+        "title": "Configure Output Folder",
+        "icon": "$(output)"
       }
     ],
     "viewsContainers": {
@@ -60,6 +99,21 @@
       "view/title": [
         {
           "command": "axiom-crypto.compile-all",
+          "group": "navigation",
+          "when": "view == axiom-circuits"
+        },
+        {
+          "command": "axiom-crypto.set-provider-uri",
+          "group": "navigation",
+          "when": "view == axiom-circuits"
+        },
+        {
+          "command": "axiom-crypto.set-private-key",
+          "group": "navigation",
+          "when": "view == axiom-circuits"
+        },
+        {
+          "command": "axiom-crypto.set-output-folder",
           "group": "navigation",
           "when": "view == axiom-circuits"
         }
