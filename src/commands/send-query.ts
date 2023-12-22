@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import { buildSendQuery } from '@axiom-crypto/client';
@@ -21,7 +20,7 @@ export class SendQuery implements vscode.Disposable {
                 vscode.window.showInformationMessage('Send Query');
 
                 // make sure provider is set
-                const provider:string = vscode.workspace.getConfiguration().get('axiomProviderUri') ?? '';
+                const provider:string = vscode.workspace.getConfiguration().get('axiom.providerUri') ?? '';
                 if (provider.length === 0){
                     vscode.window.showErrorMessage('You must set a provider URI before compiling');
                     return;
