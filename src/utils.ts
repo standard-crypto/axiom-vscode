@@ -4,12 +4,11 @@ import { Circuit, CircuitSource } from './models/circuit';
 import { Query } from './models/query';
 
 export type QueryConfig = {
-    name: string,
     inputPath: string,
     outputPath: string,
     callbackAddress: string,
     refundAddress: string
-}
+};
 
 export type CircuitConfig = {
     name: string,
@@ -17,7 +16,7 @@ export type CircuitConfig = {
     buildPath: string,
     defaultInputPath: string,
     queries: QueryConfig[]
-}
+};
 
 export function getCwd(): string {
     const workspaces = vscode.workspace.workspaceFolders;
@@ -65,6 +64,7 @@ export function createCircuits(): Circuit[] {
     const circuits = [];
     const circuitsConfig = getCircuitsConfig();
     for (let circuitDef of circuitsConfig) {
+        console.log(circuitDef);
         if (fileExists(circuitDef.circuitPath) && fileExists(circuitDef.buildPath)) {
             const circuit = new Circuit(
                 new CircuitSource(vscode.Uri.parse(circuitDef.circuitPath), circuitDef.circuitPath),
@@ -75,7 +75,6 @@ export function createCircuits(): Circuit[] {
                 if (fileExists(queryDef.inputPath)) {
                     circuit.queries.push(new Query({
                         circuit: circuit,
-                        name: queryDef.name,
                         inputPath: vscode.Uri.parse(queryDef.inputPath),
                         outputPath: vscode.Uri.parse(queryDef.outputPath),
                         refundAddress: queryDef.refundAddress as `0x${string}`,

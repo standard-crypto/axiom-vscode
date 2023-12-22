@@ -22,16 +22,29 @@ export class Run implements vscode.Disposable {
                     return;
                 }
 
-                vscode.window.showInformationMessage('Run');
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Axiom",
+                    cancellable: false
+                }, async (progress) => {
+                    progress.report({ increment: 0, message: "Running query..." });        
+        
+                    await run(query.circuit.source.filePath.fsPath, {
+                        stats: false,
+                        function: query.circuit.source.functionName,
+                        build: query.circuit.buildPath.fsPath,
+                        output: query.outputPath.fsPath,
+                        inputs: query.inputPath.fsPath,
+                        provider: provider,
+                    });
 
-                await run(query.circuit.source.filePath.fsPath, {
-                    stats: false,
-                    function: query.circuit.source.functionName,
-                    build: query.circuit.buildPath.fsPath,
-                    output: query.outputPath.fsPath,
-                    inputs: query.inputPath.fsPath,
-                    provider: provider,
+                    progress.report({increment: 100, message: `Output written to ${vscode.workspace.asRelativePath(query.outputPath)}`});
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 5000);
+                    });
                 });
+
+
             }),
         );
     }

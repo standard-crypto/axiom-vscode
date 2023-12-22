@@ -56,10 +56,6 @@
                         "type": "object",
                         "title": "query",
                         "properties": {
-                          "name": {
-                              "type": "string",
-                              "description": "Query Name"
-                          },
                           "inputPath": {
                             "type": "string",
                             "description": "Input File Path"
@@ -80,7 +76,6 @@
                       }
                     },
                     "default": [{
-                      "name": "query 1",
                       "inputPath": "data/inputs/input.json",
                       "outputPath": "data/output.json",
                       "callbackAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12",
@@ -95,7 +90,6 @@
               "buildPath": "data/build.json",
               "defaultInputPath": "data/inputs/defaultInput.json",
               "queries": [{
-                "name": "query 1",
                 "inputPath": "data/inputs/input.json",
                 "outputPath": "data/output.json",
                 "callbackAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12",
