@@ -78,8 +78,8 @@
                     "default": [{
                       "inputPath": "data/inputs/input.json",
                       "outputPath": "data/output.json",
-                      "callbackAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12",
-                      "refundAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12"
+                      "callbackAddress": "",
+                      "refundAddress": ""
                     }],
                     "description": "Queries Configuration"
                 }
@@ -92,8 +92,8 @@
               "queries": [{
                 "inputPath": "data/inputs/input.json",
                 "outputPath": "data/output.json",
-                "callbackAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12",
-                "refundAddress": "0xB6a6c32CCe5B5E963277A66019309EBf13f59F12"
+                "callbackAddress": "",
+                "refundAddress": ""
               }]
             }],
             "description": "Circuits Configuration"
