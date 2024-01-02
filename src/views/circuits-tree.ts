@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { COMMAND_ID_SHOW_CIRCUIT_SOURCE } from '../commands';
-import { Circuit, CircuitSource } from '../models/circuit';
+import { Circuit } from '../models/circuit';
 import { Query } from '../models/query';
+import { createCircuits } from '../utils';
 
 class CircuitTreeItem extends vscode.TreeItem {
     constructor(private circuit: Circuit) {
@@ -49,21 +49,8 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     }
     getChildren(element?: Circuit | Query | undefined): vscode.ProviderResult<Array<TreeElem>> {
         if (element === undefined) {
-            const circuit = new Circuit(
-                new CircuitSource(vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/axiom/circuit.ts"), "nonceIncrementor"),
-                vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/data/build.json"),
-                vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/data/inputs/defaultInput.json"),
-            );
-            circuit.queries.push(new Query({
-                circuit: circuit,
-                inputPath: vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/data/inputs/input.json"),
-                outputPath: vscode.Uri.parse("/Users/gavi/StandardCrypto/axiom-quickstart/data/output.json"),
-                refundAddress: '0xB6a6c32CCe5B5E963277A66019309EBf13f59F12',
-                callbackAddress: '0xB6a6c32CCe5B5E963277A66019309EBf13f59F12'
-            }));
-            return Promise.resolve([
-                circuit
-            ]);
+            const circuits = createCircuits();
+            return circuits;
         } else if (element instanceof Circuit) {
             return element.queries;
         } else if (element instanceof Query) {

@@ -1,40 +1,25 @@
 import * as vscode from 'vscode';
 
-export const COMMAND_ID_CONFIGURE_PROVIDER = 'axiom-crypto.set-provider-uri';
-export const COMMAND_ID_CONFIGURE_KEY = 'axiom-crypto.set-private-key';
-export const COMMAND_ID_CONFIGURE_OUTPUT = 'axiom-crypto.set-output-folder';
+export const COMMAND_ID_CONFIGURE_PARAMS = 'axiom-crypto.configure-parameters';
+export const COMMAND_ID_REFRESH_CONFIG = 'axiom-crypto.refresh-config';
 
 
-export class ConfigureProvider implements vscode.Disposable {
+export class ConfigureParameters implements vscode.Disposable {
     constructor(private context: vscode.ExtensionContext) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_CONFIGURE_PROVIDER, async () => {
-                const value = await vscode.window.showInputBox({title: 'Axiom Provider URI', prompt: 'Enter your Axiom Provider URI'});
-                await vscode.workspace.getConfiguration().update('axiomProviderUri', value, vscode.ConfigurationTarget.Global);
+            vscode.commands.registerCommand(COMMAND_ID_CONFIGURE_PARAMS, async () => {
+                vscode.commands.executeCommand('workbench.action.openWorkspaceSettings', 'axiom');
             }),
         );
     }
     dispose() {}
 }
 
-export class ConfigurePrivateKey implements vscode.Disposable {
+export class RefreshConfig implements vscode.Disposable {
     constructor(private context: vscode.ExtensionContext) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_CONFIGURE_KEY, async () => {
-                const value = await vscode.window.showInputBox({title: 'Private Key', prompt: 'Enter your private key'});
-                await vscode.workspace.getConfiguration().update('axiomPrivateKey', value, vscode.ConfigurationTarget.Global);
-            }),
-        );
-    }
-    dispose() {}
-}
-
-export class ConfigureOutputFolder implements vscode.Disposable {
-    constructor(private context: vscode.ExtensionContext) {
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_CONFIGURE_OUTPUT, async () => {
-                const value = await vscode.window.showInputBox({title: 'Output Folder', prompt: 'Enter the output folder'});
-                await vscode.workspace.getConfiguration().update('axiomOutputFolder', value, vscode.ConfigurationTarget.Workspace);
+            vscode.commands.registerCommand(COMMAND_ID_REFRESH_CONFIG, async () => {
+                vscode.commands.executeCommand("workbench.action.reloadWindow");
             }),
         );
     }

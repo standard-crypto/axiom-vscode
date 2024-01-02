@@ -1,4 +1,5 @@
 {
+  "publisher": "standard-crypto",
   "name": "axiom-crypto",
   "displayName": "Axiom Crypto",
   "description": "Support for projects built with Axiom, the ZK Coprocessor for Ethereum (https://axiom.xyz)",
@@ -17,22 +18,86 @@
 				"id": "axiom",
 				"title": "Axiom",
 				"properties": {
-					"axiomProviderUri": {
+					"axiom.providerURI": {
 						"type": "string",
-						"description": "Axiom Provider URI",
+						"description": "Provider URI",
 						"editPresentation": "singlelineText"
 					},
-          "axiomPrivateKey": {
+          "axiom.privateKey": {
 						"type": "string",
-						"description": "Axiom Private Key",
+						"description": "Private Key",
 						"editPresentation": "singlelineText"
 					},
-          "axiomOutputFolder": {
-						"type": "string",
-						"description": "Axiom Output Folder",
-            "default": "data",
-						"editPresentation": "singlelineText"
-					}
+          "axiom.circuits": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "circuit",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Circuit Name"
+                    },
+                    "circuitPath": {
+                        "type": "string",
+                        "description": "Circuit File Path"
+                    },
+                    "buildPath": {
+                      "type": "string",
+                      "description": "Circuit Build File Path"
+                    },
+                    "defaultInputPath": {
+                      "type": "string",
+                      "description": "Default Input File Path"
+                    },
+                    "queries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "query",
+                        "properties": {
+                          "inputPath": {
+                            "type": "string",
+                            "description": "Input File Path"
+                          },
+                          "outputPath": {
+                            "type": "string",
+                            "description": "Output File Path"
+                          },
+                          "callbackAddress": {
+                            "type": "string",
+                            "description": "Callback Address"
+                          },
+                          "refundAddress": {
+                            "type": "string",
+                            "description": "Refund Address"
+                          }
+                        }
+                      }
+                    },
+                    "default": [{
+                      "inputPath": "data/inputs/input.json",
+                      "outputPath": "data/output.json",
+                      "callbackAddress": "",
+                      "refundAddress": ""
+                    }],
+                    "description": "Queries Configuration"
+                }
+            },
+            "default": [{
+              "name": "nonceIncrementor",
+              "circuitPath": "axiom/circuit.ts",
+              "buildPath": "data/build.json",
+              "defaultInputPath": "data/inputs/defaultInput.json",
+              "queries": [{
+                "inputPath": "data/inputs/input.json",
+                "outputPath": "data/output.json",
+                "callbackAddress": "",
+                "refundAddress": ""
+              }]
+            }],
+            "description": "Circuits Configuration"
+        }
 				}
 			}
     ],
@@ -63,19 +128,14 @@
         "icon": "$(run)"
       },
       {
-        "command": "axiom-crypto.set-provider-uri",
-        "title": "Configure Provider URI",
+        "command": "axiom-crypto.configure-parameters",
+        "title": "Configure Parameters",
         "icon": "$(gear)"
       },
       {
-        "command": "axiom-crypto.set-private-key",
-        "title": "Configure Private Key",
-        "icon": "$(key)"
-      },
-      {
-        "command": "axiom-crypto.set-output-folder",
-        "title": "Configure Output Folder",
-        "icon": "$(output)"
+        "command": "axiom-crypto.refresh-config",
+        "title": "Refresh Configuration",
+        "icon": "$(refresh)"
       }
     ],
     "viewsContainers": {
@@ -103,17 +163,12 @@
           "when": "view == axiom-circuits"
         },
         {
-          "command": "axiom-crypto.set-provider-uri",
+          "command": "axiom-crypto.configure-parameters",
           "group": "navigation",
           "when": "view == axiom-circuits"
         },
         {
-          "command": "axiom-crypto.set-private-key",
-          "group": "navigation",
-          "when": "view == axiom-circuits"
-        },
-        {
-          "command": "axiom-crypto.set-output-folder",
+          "command": "axiom-crypto.refresh-config",
           "group": "navigation",
           "when": "view == axiom-circuits"
         }

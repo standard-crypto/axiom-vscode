@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { run } from '@axiom-crypto/circuit';
 import type { Query } from '../models/query';
-import { setOutputPathForQuery } from '../utils';
 
 export const COMMAND_ID_RUN = 'axiom-crypto.run';
 
@@ -17,7 +16,7 @@ export class Run implements vscode.Disposable {
                 console.log('Run', query);
 
                 // make sure provider is set
-                const provider:string = vscode.workspace.getConfiguration().get('axiomProviderUri') ?? '';
+                const provider:string = vscode.workspace.getConfiguration().get('axiom.providerURI') ?? '';
                 if (provider.length === 0){
                     vscode.window.showErrorMessage('You must set a provider URI before compiling');
                     return;
@@ -30,8 +29,6 @@ export class Run implements vscode.Disposable {
                 }, async (progress) => {
                     progress.report({ increment: 0, message: "Running query..." });        
         
-                    setOutputPathForQuery(query);
-
                     await run(query.circuit.source.filePath.fsPath, {
                         stats: false,
                         function: query.circuit.source.functionName,

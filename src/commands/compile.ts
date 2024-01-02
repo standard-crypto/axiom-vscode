@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import { compile } from '@axiom-crypto/circuit';
 import { Circuit } from '../models/circuit';
-import * as fs from 'fs';
-import { setBuildPathForCircuit } from '../utils';
 
 export const COMMAND_ID_COMPILE = 'axiom-crypto.compile';
 
@@ -13,7 +11,7 @@ export class Compile implements vscode.Disposable {
                 console.log('Compile', circuit);
 
                 // make sure provider is set
-                const provider:string = vscode.workspace.getConfiguration().get('axiomProviderUri') ?? '';
+                const provider:string = vscode.workspace.getConfiguration().get('axiom.providerURI') ?? '';
                 if (provider.length === 0){
                     vscode.window.showErrorMessage('You must set a provider URI before compiling');
                     return;
@@ -25,8 +23,6 @@ export class Compile implements vscode.Disposable {
                     cancellable: false
                 }, async (progress) => {
                     progress.report({ increment: 0, message: "Compiling circuit..." });       
-
-                    setBuildPathForCircuit(circuit);
         
                     await compile(circuit.source.filePath.fsPath, {
                         stats: false,
