@@ -18,28 +18,21 @@ export type CircuitConfig = {
     queries: QueryConfig[]
 };
 
-export function getCwd(): string {
+export function getCwd(): vscode.Uri {
     const workspaces = vscode.workspace.workspaceFolders;
     if (workspaces !== undefined) {
-        const cwdUri = workspaces[0].uri.toString();
-        return cwdUri.replace('file://', '');
+        return workspaces[0].uri;
     }
-    return '';
-}
-
-export function listFiles(dir: string): string[] {
-    const cleanedDir = dir.replaceAll('//', '/');
-    return fs.readdirSync(cleanedDir);
+    return vscode.Uri.parse('');
 }
 
 export function fileExists(path: string): boolean {
     return fs.existsSync(path);
 }
 
-export function getFullFilePath(relativePath: string): string {
+export function getFullFilePath(relativePath: string): vscode.Uri {
     const cwd = getCwd();
-    const fullPath = cwd + '/' + relativePath;
-    return fullPath.replaceAll('//', '/');
+    return vscode.Uri.joinPath(cwd, relativePath);
 }
 
 function getRawCircuitsConfig(): CircuitConfig[] {
@@ -49,12 +42,12 @@ function getRawCircuitsConfig(): CircuitConfig[] {
 function getCircuitsConfig(): CircuitConfig[] {
     const circuitsConfig = getRawCircuitsConfig();
     for (let config of circuitsConfig) {
-        config.circuitPath = getFullFilePath(config.circuitPath);
-        config.buildPath = getFullFilePath(config.buildPath);
-        config.defaultInputPath = getFullFilePath(config.defaultInputPath);
+        config.circuitPath = getFullFilePath(config.circuitPath).fsPath;
+        config.buildPath = getFullFilePath(config.buildPath).fsPath;
+        config.defaultInputPath = getFullFilePath(config.defaultInputPath).fsPath;
         for (let queryConfig of config.queries) {
-            queryConfig.inputPath = getFullFilePath(queryConfig.inputPath);
-            queryConfig.outputPath = getFullFilePath(queryConfig.outputPath);
+            queryConfig.inputPath = getFullFilePath(queryConfig.inputPath).fsPath;
+            queryConfig.outputPath = getFullFilePath(queryConfig.outputPath).fsPath;
         }
     }
     return circuitsConfig;
@@ -67,7 +60,7 @@ export function createCircuits(): Circuit[] {
         console.log(circuitDef);
         if (fileExists(circuitDef.circuitPath) && fileExists(circuitDef.buildPath)) {
             const circuit = new Circuit(
-                new CircuitSource(vscode.Uri.parse(circuitDef.circuitPath), circuitDef.circuitPath),
+                new CircuitSource(vscode.Uri.parse(circuitDef.circuitPath), circuitDef.name),
                 vscode.Uri.parse(circuitDef.buildPath),
                 vscode.Uri.parse(circuitDef.defaultInputPath),
             );
