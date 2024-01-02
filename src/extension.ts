@@ -7,9 +7,12 @@ import { registerCommands } from './commands';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	registerCommands(context);
+	const circuitsTree = new CircuitsTree(context);
 
-	new CircuitsTree(context);
+	registerCommands(context, circuitsTree);
+
+	subscribeToConfigChanges(context, circuitsTree);
+
 	// new QueriesTree(context);
 
 	// // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -26,6 +29,14 @@ export function activate(context: vscode.ExtensionContext) {
 	// });
 
 	// context.subscriptions.push(disposable);
+}
+
+function subscribeToConfigChanges(context: vscode.ExtensionContext, circuitsTree: CircuitsTree) {
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
+		if (e.affectsConfiguration('axiom')) {
+			circuitsTree.refresh();
+		}
+	}));
 }
 
 // This method is called when your extension is deactivated

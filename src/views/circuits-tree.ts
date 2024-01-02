@@ -38,6 +38,13 @@ class CallbackAddrTreeItem extends vscode.TreeItem {
 type TreeElem = Circuit | Query | {address: string};
 
 class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TreeElem | undefined | null | void> = new vscode.EventEmitter<TreeElem | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<TreeElem | undefined | null | void> = this._onDidChangeTreeData.event;
+  
+    refresh(): void {
+      this._onDidChangeTreeData.fire();
+    }
+
     getTreeItem(element: TreeElem): vscode.TreeItem | Thenable<vscode.TreeItem> {
         if (element instanceof Circuit) {
             return new CircuitTreeItem(element);
@@ -60,9 +67,15 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
 }
 
 export class CircuitsTree {
+    private dataProvider: CircuitsDataProvider;
+
     constructor(context: vscode.ExtensionContext) {
-        const dataProvider = new CircuitsDataProvider();
-        vscode.window.registerTreeDataProvider('axiom-circuits', dataProvider);
-        vscode.window.createTreeView('axiom-circuits', {treeDataProvider: dataProvider});
+        this.dataProvider = new CircuitsDataProvider();
+        vscode.window.registerTreeDataProvider('axiom-circuits', this.dataProvider);
+        vscode.window.createTreeView('axiom-circuits', {treeDataProvider: this.dataProvider});
+    }
+
+    public refresh(): void {
+        this.dataProvider.refresh();
     }
 }
