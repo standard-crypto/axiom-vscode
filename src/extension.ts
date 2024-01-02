@@ -3,37 +3,25 @@
 import * as vscode from 'vscode';
 import { CircuitsTree } from './views/circuits-tree';
 import { registerCommands } from './commands';
+import { StateStore } from './state';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-	const circuitsTree = new CircuitsTree(context);
+export async function activate(context: vscode.ExtensionContext) {
+	const stateStore = new StateStore(context);
+	await stateStore.loadFromExtensionSettings();
+
+	const circuitsTree = new CircuitsTree(stateStore);
 
 	registerCommands(context, circuitsTree);
 
-	subscribeToConfigChanges(context, circuitsTree);
-
-	// new QueriesTree(context);
-
-	// // Use the console to output diagnostic information (console.log) and errors (console.error)
-	// // This line of code will only be executed once when your extension is activated
-	// console.log('Congratulations, your extension "axiom-crypto" is now active!');
-
-	// // The command has been defined in the package.json file
-	// // Now provide the implementation of the command with registerCommand
-	// // The commandId parameter must match the command field in package.json
-	// let disposable = vscode.commands.registerCommand('axiom-crypto.helloWorld', () => {
-	// 	// The code you place here will be executed every time your command is executed
-	// 	// Display a message box to the user
-	// 	vscode.window.showInformationMessage('Hello World from Axiom Crypto!');
-	// });
-
-	// context.subscriptions.push(disposable);
+	subscribeToConfigChanges(context, stateStore, circuitsTree);
 }
 
-function subscribeToConfigChanges(context: vscode.ExtensionContext, circuitsTree: CircuitsTree) {
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
+function subscribeToConfigChanges(context: vscode.ExtensionContext, stateStore: StateStore,circuitsTree: CircuitsTree) {
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
 		if (e.affectsConfiguration('axiom')) {
+			await stateStore.loadFromExtensionSettings();
 			circuitsTree.refresh();
 		}
 	}));

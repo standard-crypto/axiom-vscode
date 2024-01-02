@@ -3,6 +3,7 @@ import { COMMAND_ID_SHOW_CIRCUIT_SOURCE } from '../commands';
 import { Circuit } from '../models/circuit';
 import { Query } from '../models/query';
 import { createCircuits } from '../utils';
+import { StateStore } from '../state';
 
 class CircuitTreeItem extends vscode.TreeItem {
     constructor(private circuit: Circuit) {
@@ -41,6 +42,8 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     private _onDidChangeTreeData: vscode.EventEmitter<TreeElem | undefined | null | void> = new vscode.EventEmitter<TreeElem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<TreeElem | undefined | null | void> = this._onDidChangeTreeData.event;
   
+    constructor(private stateStore: StateStore) {}
+
     refresh(): void {
       this._onDidChangeTreeData.fire();
     }
@@ -54,10 +57,9 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
             return new QueryTreeItem(element);
         }
     }
-    getChildren(element?: Circuit | Query | undefined): vscode.ProviderResult<Array<TreeElem>> {
+    async getChildren(element?: Circuit | Query | undefined): Promise<Array<TreeElem> | undefined> {
         if (element === undefined) {
-            const circuits = createCircuits();
-            return circuits;
+            return this.stateStore.getState().circuits;
         } else if (element instanceof Circuit) {
             return element.queries;
         } else if (element instanceof Query) {
@@ -69,8 +71,8 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
 export class CircuitsTree {
     private dataProvider: CircuitsDataProvider;
 
-    constructor(context: vscode.ExtensionContext) {
-        this.dataProvider = new CircuitsDataProvider();
+    constructor(stateStore: StateStore) {
+        this.dataProvider = new CircuitsDataProvider(stateStore);
         vscode.window.registerTreeDataProvider('axiom-circuits', this.dataProvider);
         vscode.window.createTreeView('axiom-circuits', {treeDataProvider: this.dataProvider});
     }

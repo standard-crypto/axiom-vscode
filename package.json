@@ -28,6 +28,24 @@
 						"description": "Private Key",
 						"editPresentation": "singlelineText"
 					},
+          "axiom.circuitFilesPattern": {
+            "type": "string",
+            "description": "Glob pattern to used to automatically discover files containing circuit definitions",
+            "default": "**/axiom/**/*.ts"
+          },
+          "axiom.circuitInputsProvided": {
+            "type": "string",
+            "enum": [
+              "As exported typescript constants",
+              "As separate input files"
+            ],
+            "default": "As separate input files"
+          },
+          "axiom.buildDirectory": {
+            "type": "string",
+            "default": "build/axiom",
+            "description": "Path where circuit outputs from compiled circuits will be written"
+          },
           "axiom.circuits": {
             "type": "array",
             "items": {
