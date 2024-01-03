@@ -27,7 +27,7 @@ export class Compile implements vscode.Disposable {
                     await compile(circuit.source.filePath.fsPath, {
                         stats: false,
                         function: circuit.source.functionName,
-                        inputs: circuit.defaultInputs.fsPath,
+                        inputs: circuit.defaultInputs?.fsPath ?? "TODO ---------------------------",
                         output: circuit.buildPath.fsPath,
                         provider: provider,
                     });
