@@ -59,8 +59,6 @@ export class StateStore {
 
         const circuitFiles = await vscode.workspace.findFiles(circuitFilesPattern, "**​/node_modules/**");
 
-        console.log(circuitFilesPattern, circuitFiles.length);
-
         for (const circuitFileUri of circuitFiles) {
             const circuitName = extractCircuitName(circuitFileUri);
             if (circuitName === undefined) {
