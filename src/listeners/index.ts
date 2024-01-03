@@ -24,14 +24,14 @@ export function registerCustomListeners(context: vscode.ExtensionContext, stateS
 }
 
 class CircuitsPatternFsWatcher {
-	private watcher?: vscode.FileSystemWatcher;
+	private _watcher?: vscode.FileSystemWatcher;
 
-	constructor(private stateStore: StateStore, private context: vscode.ExtensionContext, private circuitsTree: CircuitsTree) {}
+	constructor(private _stateStore: StateStore, private _context: vscode.ExtensionContext, private _circuitsTree: CircuitsTree) {}
 	
 	createOrUpdateWatcherFromSettings() {
 		// remove any existing filesystem watcher
-		if (this.watcher !== undefined) {
-			this.watcher.dispose();
+		if (this._watcher !== undefined) {
+			this._watcher.dispose();
 		}
 		
 		// register a new watcher for the glob specified in the extension's settings
@@ -40,20 +40,20 @@ class CircuitsPatternFsWatcher {
 			return;
 		}
 
-		this.watcher = vscode.workspace.createFileSystemWatcher(circuitFilesPattern);
-		this.context.subscriptions.push(this.watcher);
-		this.watcher.onDidChange(this.onChange.bind(this));
-		this.watcher.onDidCreate(this.onChange.bind(this));
-		this.watcher.onDidDelete(this.onChange.bind(this));
+		this._watcher = vscode.workspace.createFileSystemWatcher(circuitFilesPattern);
+		this._context.subscriptions.push(this._watcher);
+		this._watcher.onDidChange(this._onChange.bind(this));
+		this._watcher.onDidCreate(this._onChange.bind(this));
+		this._watcher.onDidDelete(this._onChange.bind(this));
 	}
 
-	async onChange(uri: vscode.Uri) {
+	private async _onChange(uri: vscode.Uri) {
 		console.log(`${uri.fsPath} changed, refreshing state`);
 
 		// update local state from the new settings
-		await this.stateStore.loadFromExtensionSettings();
+		await this._stateStore.loadFromExtensionSettings();
 			
 		// re-draw the circuits tree view
-		this.circuitsTree.refresh();
+		this._circuitsTree.refresh();
 	}
 }
