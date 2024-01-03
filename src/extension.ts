@@ -1,30 +1,20 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { CircuitsTree } from './views/circuits-tree';
 import { registerCommands } from './commands';
 import { StateStore } from './state';
+import { registerCustomListeners } from './listeners';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
+	// create and populate local state store
 	const stateStore = new StateStore(context);
 	await stateStore.loadFromExtensionSettings();
 
+	// create the tree view
 	const circuitsTree = new CircuitsTree(stateStore);
 
 	registerCommands(context, circuitsTree);
 
-	subscribeToConfigChanges(context, stateStore, circuitsTree);
-}
-
-function subscribeToConfigChanges(context: vscode.ExtensionContext, stateStore: StateStore,circuitsTree: CircuitsTree) {
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
-		if (e.affectsConfiguration('axiom')) {
-			await stateStore.loadFromExtensionSettings();
-			circuitsTree.refresh();
-		}
-	}));
+	registerCustomListeners(context, stateStore, circuitsTree);
 }
 
 // This method is called when your extension is deactivated
