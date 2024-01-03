@@ -103,6 +103,11 @@
     ],
     "commands": [
       {
+        "command": "axiom-crypto.add-query",
+        "title": "Add Query",
+        "icon": "$(plus)"
+      },
+      {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
         "icon": "$(circuit-board)"
@@ -193,6 +198,11 @@
           "command": "axiom-crypto.send-query",
           "group": "inline@2",
           "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.add-query",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == queryHeader"
         }
       ]
     }
