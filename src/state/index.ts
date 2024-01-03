@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Circuit, CircuitSource } from '../models/circuit';
+import { extractCircuitName } from '../utils';
 
 interface SerializedState {
     circuits: Array<{
@@ -61,7 +62,10 @@ export class StateStore {
         console.log(circuitFilesPattern, circuitFiles.length);
 
         for (const circuitFileUri of circuitFiles) {
-            const circuitName = 'dummy circuit name';
+            const circuitName = extractCircuitName(circuitFileUri);
+            if (circuitName === undefined) {
+                throw new Error(`Unable to infer circuit name from ${circuitFileUri.fsPath}`);
+            }
 
             const buildPath = path.join(this.context.asAbsolutePath(buildDirectory), `${circuitName}.json`);
 

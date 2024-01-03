@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { COMMAND_ID_SHOW_CIRCUIT_SOURCE } from '../commands';
 import { Circuit } from '../models/circuit';
 import { Query } from '../models/query';
-import { createCircuits } from '../utils';
 import { StateStore } from '../state';
 
 class CircuitTreeItem extends vscode.TreeItem {
@@ -57,7 +56,8 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
             return new QueryTreeItem(element);
         }
     }
-    async getChildren(element?: Circuit | Query | undefined): Promise<Array<TreeElem> | undefined> {
+
+    getChildren(element?: Circuit | Query | undefined): Array<TreeElem> | undefined {
         if (element === undefined) {
             return this.stateStore.getState().circuits;
         } else if (element instanceof Circuit) {
