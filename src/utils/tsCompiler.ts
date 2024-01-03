@@ -25,11 +25,19 @@ export function extractCircuitName(circuitFileUri: vscode.Uri): string | undefin
         const declaration = exp.declarations[0];
         
         if (ts.isFunctionLike(declaration)) {
-            // *********************
-            // TODO
-            // *********************
+            /* found an export like:
+             *     export async myCircuit(param1, param2) {
+             *
+             *     }
+             */
+            return (declaration.name as ts.Identifier).escapedText.toString();
         } else if (ts.isVariableDeclaration(declaration)) {
             if (ts.isFunctionLike(declaration.initializer)) {
+                /* found an export like:
+                *     export const myCircuit = async(param1, param2) => {
+                *
+                *     }
+                */
                 return (declaration.name as ts.Identifier).escapedText.toString();
             }
         }
