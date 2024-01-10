@@ -5,9 +5,10 @@ import { CompileAll } from './compile-all';
 import { Run } from './run';
 import { SendQuery } from './send-query';
 import { AddQuery } from './add-query';
-import { RenameQuery, UpdateQueryCallback, UpdateQueryInput, UpdateQueryRefund } from './update-query';
+import { DeleteQuery, RenameQuery, UpdateQueryCallback, UpdateQueryInput, UpdateQueryRefund } from './update-query';
 import { ConfigureParameters, RefreshConfig } from './configure';
 import { CircuitsTree } from '../views/circuits-tree';
+import { StateStore } from '../state';
 
 export * from './compile';
 export * from './compile-all';
@@ -16,13 +17,14 @@ export * from './send-query';
 export * from './add-query';
 export * from './show-circuit-source';
 
-export function registerCommands(context: vscode.ExtensionContext, circuitsTree: CircuitsTree) {
+export function registerCommands(context: vscode.ExtensionContext, circuitsTree: CircuitsTree, stateStore: StateStore) {
 	context.subscriptions.push(new Compile(context));
 	context.subscriptions.push(new CompileAll(context));
 	context.subscriptions.push(new Run(context));
 	context.subscriptions.push(new SendQuery(context));
 	context.subscriptions.push(new AddQuery(context, circuitsTree));
 	context.subscriptions.push(new RenameQuery(context, circuitsTree));
+	context.subscriptions.push(new DeleteQuery(context, circuitsTree, stateStore));
 	context.subscriptions.push(new UpdateQueryInput(context, circuitsTree));
 	context.subscriptions.push(new UpdateQueryCallback(context, circuitsTree));
 	context.subscriptions.push(new UpdateQueryRefund(context, circuitsTree));

@@ -131,6 +131,11 @@
         "icon": "$(pencil)"
       },
       {
+        "command": "axiom-crypto.delete-query",
+        "title": "Delete Query",
+        "icon": "$(trash)"
+      },
+      {
         "command": "axiom-crypto.update-query-input",
         "title": "Update Query Callback Address",
         "icon": "$(pencil)"
@@ -233,13 +238,18 @@
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.run",
+          "command": "axiom-crypto.delete-query",
           "group": "inline@2",
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.send-query",
+          "command": "axiom-crypto.run",
           "group": "inline@3",
+          "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.send-query",
+          "group": "inline@4",
           "when": "view == axiom-circuits && viewItem == query"
         },
         {

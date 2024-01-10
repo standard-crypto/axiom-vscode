@@ -12,7 +12,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// create the tree view
 	const circuitsTree = new CircuitsTree(stateStore);
 
-	registerCommands(context, circuitsTree);
+	registerCommands(context, circuitsTree, stateStore);
 
 	registerCustomListeners(context, stateStore, circuitsTree);
 }

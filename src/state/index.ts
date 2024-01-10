@@ -84,6 +84,21 @@ export class StateStore {
         return state;
     }
 
+    updateState(circuit: Circuit) {
+        const state = this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY);
+        if (state === undefined) {
+            this.context.workspaceState.update(StateStore._STORAGE_KEY, this._serializeState({circuits: [circuit]}));
+        } else {
+            const deserializedState = this._deserializeState(state);
+            for (const [index, existingCircuit] of deserializedState.circuits.entries()) {
+                if (existingCircuit.source.filePath.path === circuit.source.filePath.path) {
+                    deserializedState.circuits[index] = circuit;
+                }
+            }
+            this.context.workspaceState.update(StateStore._STORAGE_KEY, this._serializeState(deserializedState));
+        }
+    }
+
     getState(): State {
         const state = this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY);
         if (state === undefined) {

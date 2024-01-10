@@ -2,8 +2,10 @@ import * as vscode from 'vscode';
 import { Query } from '../models/query';
 import { CircuitsTree } from '../views/circuits-tree';
 import { Circuit } from '../models/circuit';
+import { StateStore } from '../state';
 
 export const COMMAND_ID_RENAME_QUERY = 'axiom-crypto.rename-query';
+export const COMMAND_ID_DELETE_QUERY = 'axiom-crypto.delete-query';
 export const COMMAND_ID_UPDATE_QUERY_INPUT = 'axiom-crypto.update-query-input';
 export const COMMAND_ID_UPDATE_QUERY_CALLBACK = 'axiom-crypto.update-query-callback';
 export const COMMAND_ID_UPDATE_QUERY_REFUND = 'axiom-crypto.update-query-refund';
@@ -22,6 +24,21 @@ export class RenameQuery implements vscode.Disposable {
                     treeItem.query.outputPath = vscode.Uri.parse(outputPath);
                     circuitsTree.refresh();
                 }
+            }),
+        );
+    }
+    dispose() {}
+}
+
+export class DeleteQuery implements vscode.Disposable {
+    constructor(private context: vscode.ExtensionContext, circuitsTree: CircuitsTree, stateStore: StateStore) {
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand(COMMAND_ID_DELETE_QUERY, async (treeItem: {query: Query | undefined, circuit: Circuit}) => {
+                console.log('Delete Query', treeItem);
+                treeItem.circuit.queries = treeItem.circuit.queries.filter(query => query !== treeItem.query);
+                treeItem.query = undefined;
+                stateStore.updateState(treeItem.circuit);
+                circuitsTree.refresh();
             }),
         );
     }
