@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { run } from '@axiom-crypto/circuit';
 import type { Query } from '../models/query';
+import { Circuit } from '../models/circuit';
 
 export const COMMAND_ID_RUN = 'axiom-crypto.run';
 
@@ -12,8 +13,8 @@ export interface RunArgs {
 export class Run implements vscode.Disposable {
     constructor(private context: vscode.ExtensionContext) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_RUN, async (query: Query) => {
-                console.log('Run', query);
+            vscode.commands.registerCommand(COMMAND_ID_RUN, async (treeItem: {query: Query, circuit: Circuit}) => {
+                console.log('Run', treeItem.query);
 
                 // make sure provider is set
                 const provider:string = vscode.workspace.getConfiguration().get('axiom.providerURI') ?? '';
@@ -29,16 +30,16 @@ export class Run implements vscode.Disposable {
                 }, async (progress) => {
                     progress.report({ increment: 0, message: "Running query..." });        
         
-                    await run(query.circuit.source.filePath.fsPath, {
+                    await run(treeItem.circuit.source.filePath.fsPath, {
                         stats: false,
-                        function: query.circuit.source.functionName,
-                        build: query.circuit.buildPath.fsPath,
-                        output: query.outputPath.fsPath,
-                        inputs: query.inputPath.fsPath,
+                        function: treeItem.circuit.source.functionName,
+                        build: treeItem.circuit.buildPath.fsPath,
+                        output: treeItem.query.outputPath.fsPath,
+                        inputs: treeItem.query.inputPath.fsPath,
                         provider: provider,
                     });
 
-                    progress.report({increment: 100, message: `Output written to ${vscode.workspace.asRelativePath(query.outputPath)}`});
+                    progress.report({increment: 100, message: `Output written to ${vscode.workspace.asRelativePath(treeItem.query.outputPath)}`});
                     await new Promise((resolve) => {
                         setTimeout(resolve, 5000);
                     });

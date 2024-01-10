@@ -15,12 +15,12 @@ function readJsonFromFile(relativePath: string) {
 export class SendQuery implements vscode.Disposable {
     constructor(private context: vscode.ExtensionContext) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_SEND_QUERY, async (query: Query) => {
-                console.log('Send Query', query);
+            vscode.commands.registerCommand(COMMAND_ID_SEND_QUERY, async (treeItem: {query: Query}) => {
+                console.log('Send Query', treeItem);
                 vscode.window.showInformationMessage('Send Query');
 
                 // make sure provider is set
-                const provider:string = vscode.workspace.getConfiguration().get('axiom.providerUri') ?? '';
+                const provider:string = vscode.workspace.getConfiguration().get('axiom.providerURI') ?? '';
                 if (provider.length === 0){
                     vscode.window.showErrorMessage('You must set a provider URI before compiling');
                     return;
@@ -35,22 +35,22 @@ export class SendQuery implements vscode.Disposable {
                 });
 
                 // TODO: should run if output file does not exist
-                const outputJson = readJsonFromFile(query.outputPath.fsPath);
+                const outputJson = readJsonFromFile(treeItem.query.outputPath.fsPath);
 
                 const sendQuery = await buildSendQuery({
                     axiom,
                     dataQuery: outputJson.dataQuery,
                     computeQuery: outputJson.computeQuery,
                     callback: {
-                      target: query.callbackAddress,
-                      extraData: query.callbackExtraData ?? "0x",
+                      target: treeItem.query.callbackAddress,
+                      extraData: treeItem.query.callbackExtraData ?? "0x",
                     },
                     options: {
-                      refundee: query.refundAddress,
+                      refundee: treeItem.query.refundAddress,
                     //   maxFeePerGas: options.maxFeePerGas,
                     //   callbackGasLimit: options.callbackGasLimit,
                     },
-                    caller: query.refundAddress,
+                    caller: treeItem.query.refundAddress,
                 });
 
                 const rpcProvider = new JsonRpcProvider(provider, chainId);

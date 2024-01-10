@@ -45,7 +45,7 @@ export class StateStore {
             const newCircuit = new Circuit(
                 new CircuitSource(vscode.Uri.parse(circuit.filePath), circuit.functionName),
                 vscode.Uri.parse(circuit.buildPath),
-                undefined,
+                undefined
             );
             newCircuit.queries = circuit.queries;
             deserialized.circuits.push(newCircuit);
@@ -70,21 +70,24 @@ export class StateStore {
                 throw new Error(`Unable to infer circuit name from ${circuitFileUri.fsPath}`);
             }
 
-            const buildPath = path.join(this.context.asAbsolutePath(buildDirectory), `${circuitName}.json`);
+            if (vscode.workspace.workspaceFolders) {
+                const rootPath = vscode.workspace.workspaceFolders[0].uri;
+                const buildPath = path.join(rootPath.path, buildDirectory, `${circuitName}.json`);
 
-            const circuit = new Circuit(
-                new CircuitSource(circuitFileUri, circuitName),
-                vscode.Uri.parse(buildPath),
-                undefined
-            );
-            state.circuits.push(circuit);
+                const circuit = new Circuit(
+                    new CircuitSource(circuitFileUri, circuitName),
+                    vscode.Uri.parse(buildPath),
+                    undefined
+                );
+                state.circuits.push(circuit);
+            }
         }
 
         this.context.workspaceState.update(StateStore._STORAGE_KEY, this._serializeState(state));
         return state;
     }
 
-    updateState(circuit: Circuit) {
+    async updateState(circuit: Circuit): Promise<void> {
         const state = this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY);
         if (state === undefined) {
             this.context.workspaceState.update(StateStore._STORAGE_KEY, this._serializeState({circuits: [circuit]}));

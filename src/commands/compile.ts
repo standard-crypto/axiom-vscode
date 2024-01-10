@@ -17,6 +17,21 @@ export class Compile implements vscode.Disposable {
                     return;
                 }
 
+                // set default inputs
+                if (!circuit.defaultInputs) {
+                    for (const query of circuit.queries) {
+                        if (query.inputPath.path !== '/') {
+                            circuit.defaultInputs = query.inputPath;
+                        }
+                    }
+                }
+
+                // make sure default inputs are set
+                if (!circuit.defaultInputs) {
+                    vscode.window.showErrorMessage('You must add a query and set an input file before compiling');
+                    return;
+                }
+
                 vscode.window.withProgress({
                     location: vscode.ProgressLocation.Notification,
                     title: "Axiom",

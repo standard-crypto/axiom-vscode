@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import type { buildSendQuery } from '@axiom-crypto/client';
 import type { Circuit } from "./circuit";
 

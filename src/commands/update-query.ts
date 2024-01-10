@@ -37,7 +37,7 @@ export class DeleteQuery implements vscode.Disposable {
                 console.log('Delete Query', treeItem);
                 treeItem.circuit.queries = treeItem.circuit.queries.filter(query => query !== treeItem.query);
                 treeItem.query = undefined;
-                stateStore.updateState(treeItem.circuit);
+                await stateStore.updateState(treeItem.circuit);
                 circuitsTree.refresh();
             }),
         );
