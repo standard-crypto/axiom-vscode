@@ -5,6 +5,7 @@ import { CompileAll } from './compile-all';
 import { Run } from './run';
 import { SendQuery } from './send-query';
 import { AddQuery } from './add-query';
+import { RenameQuery, UpdateQueryCallback, UpdateQueryInput, UpdateQueryRefund } from './update-query';
 import { ConfigureParameters, RefreshConfig } from './configure';
 import { CircuitsTree } from '../views/circuits-tree';
 
@@ -20,7 +21,11 @@ export function registerCommands(context: vscode.ExtensionContext, circuitsTree:
 	context.subscriptions.push(new CompileAll(context));
 	context.subscriptions.push(new Run(context));
 	context.subscriptions.push(new SendQuery(context));
-	context.subscriptions.push(new AddQuery(context));
+	context.subscriptions.push(new AddQuery(context, circuitsTree));
+	context.subscriptions.push(new RenameQuery(context, circuitsTree));
+	context.subscriptions.push(new UpdateQueryInput(context, circuitsTree));
+	context.subscriptions.push(new UpdateQueryCallback(context, circuitsTree));
+	context.subscriptions.push(new UpdateQueryRefund(context, circuitsTree));
 	context.subscriptions.push(new ShowCircuitSource(context));
 	context.subscriptions.push(new ConfigureParameters(context));
 	context.subscriptions.push(new RefreshConfig(context, circuitsTree));

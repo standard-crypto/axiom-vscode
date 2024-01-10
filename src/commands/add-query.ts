@@ -1,15 +1,28 @@
 import * as vscode from 'vscode';
+import { Circuit } from '../models/circuit';
+import { Query } from '../models/query';
+import { CircuitsTree } from '../views/circuits-tree';
 
 export const COMMAND_ID_ADD_QUERY = 'axiom-crypto.add-query';
 
 export class AddQuery implements vscode.Disposable {
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(private context: vscode.ExtensionContext, circuitsTree: CircuitsTree) {
         this.context.subscriptions.push(
-            vscode.commands.registerCommand(COMMAND_ID_ADD_QUERY, async () => {
+            vscode.commands.registerCommand(COMMAND_ID_ADD_QUERY, async (treeItem: {circuit: Circuit}) => {
                 console.log('add query');
                 vscode.window.showInformationMessage('Add Query');
-                // const inputFile = await vscode.window.showOpenDialog();
-                // const webviewView = vscode.window.createWebviewPanel()
+                const queryName = 'query' + (treeItem.circuit.queries.length + 1).toString();
+                const buildPathPrefix = treeItem.circuit.buildPath.path.substring(0, treeItem.circuit.buildPath.path.lastIndexOf('/'));
+                const outputPath = (buildPathPrefix + '/' + treeItem.circuit.name + '/' + queryName + '/output.json').replaceAll('//', '/');
+                treeItem.circuit.queries.push(new Query({
+                    circuit: treeItem.circuit,
+                    name: queryName,
+                    inputPath: vscode.Uri.parse(''),
+                    outputPath: vscode.Uri.parse(outputPath),
+                    refundAddress: '0x0' as `0x${string}`,
+                    callbackAddress: '0x0' as `0x${string}`
+                }));
+                circuitsTree.refresh();
             }),
         );
     }

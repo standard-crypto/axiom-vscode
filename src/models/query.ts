@@ -5,6 +5,7 @@ import type { Circuit } from "./circuit";
 
 export class Query {
     circuit: Circuit;
+    name: string;
     inputPath: vscode.Uri;
     outputPath: vscode.Uri;
 
@@ -18,19 +19,17 @@ export class Query {
 
     constructor(args: {
         circuit: Circuit, 
+        name: string,
         inputPath: vscode.Uri, 
         outputPath: vscode.Uri, 
         callbackAddress: `0x${string}`
         refundAddress: `0x${string}`
     }) {
         this.circuit = args.circuit;
+        this.name = args.name;
         this.inputPath = args.inputPath;
         this.outputPath = args.outputPath;
         this.callbackAddress = args.callbackAddress;
         this.refundAddress = args.refundAddress;
-    }
-
-    get name(): string {
-        return path.basename(this.inputPath.fsPath, path.extname(this.inputPath.fsPath));
     }
 }

@@ -126,6 +126,26 @@
         "icon": "$(plus)"
       },
       {
+        "command": "axiom-crypto.rename-query",
+        "title": "Rename Query",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.update-query-input",
+        "title": "Update Query Callback Address",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.update-query-callback",
+        "title": "Update Query Refund Address",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.update-query-refund",
+        "title": "Update Query Input",
+        "icon": "$(pencil)"
+      },
+      {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
         "icon": "$(circuit-board)"
@@ -208,19 +228,39 @@
           "when": "view == axiom-circuits && viewItem == circuit"
         },
         {
-          "command": "axiom-crypto.run",
+          "command": "axiom-crypto.rename-query",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.send-query",
+          "command": "axiom-crypto.run",
           "group": "inline@2",
+          "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.send-query",
+          "group": "inline@3",
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
           "command": "axiom-crypto.add-query",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == queryHeader"
+        },
+        {
+          "command": "axiom-crypto.update-query-input",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == inputFile"
+        },
+        {
+          "command": "axiom-crypto.update-query-callback",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == callbackAddress"
+        },
+        {
+          "command": "axiom-crypto.update-query-refund",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == refundAddress"
         }
       ]
     }
@@ -228,6 +268,7 @@
   "scripts": {
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
+    "recompile": "rm -Rf out && yarn compile",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",

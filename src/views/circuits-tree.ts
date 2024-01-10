@@ -19,7 +19,7 @@ class CircuitTreeItem extends vscode.TreeItem {
 }
 
 class QueryHeaderItem extends vscode.TreeItem {
-    constructor(private queries: Query[]) {
+    constructor(private queries: Query[], private circuit: Circuit) {
         super('Queries');
         this.queries = queries;
         this.contextValue = "queryHeader";
@@ -29,23 +29,38 @@ class QueryHeaderItem extends vscode.TreeItem {
 }
 
 class QueryTreeItem extends vscode.TreeItem {
-    constructor(private query: Query) {
+    constructor(private query: Query, private circuit: Circuit) {
         super(query.name);
         this.contextValue = "query";
         this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-        this.description = vscode.workspace.asRelativePath(query.inputPath);
+    }
+}
+
+class InputFileTreeItem extends vscode.TreeItem {
+    constructor(private inputFile: string) {
+        super("file: ");
+        this.contextValue = "inputFile";
+        this.description = inputFile;
     }
 }
 
 class CallbackAddrTreeItem extends vscode.TreeItem {
-    constructor(private address: string) {
+    constructor(private callbackAddress: string) {
         super("Callback: ");
         this.contextValue = "callbackAddress";
-        this.description = address;
+        this.description = callbackAddress;
     }
 }
 
-type TreeElem = Circuit | Query | {address: string} | {queries: Query[]};
+class RefundAddrTreeItem extends vscode.TreeItem {
+    constructor(private refundAddress: string) {
+        super("Refund Address: ");
+        this.contextValue = "refundAddress";
+        this.description = refundAddress;
+    }
+}
+
+type TreeElem = Circuit | {query: Query, circuit: Circuit} | {queries: Query[], circuit: Circuit} | {query: Query, type: 'inputFile' | 'callbackAddress' | 'refundAddress'};
 
 class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     private _onDidChangeTreeData: vscode.EventEmitter<TreeElem | undefined | null | void> = new vscode.EventEmitter<TreeElem | undefined | null | void>();
@@ -60,24 +75,34 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     getTreeItem(element: TreeElem): vscode.TreeItem | Thenable<vscode.TreeItem> {
         if (element instanceof Circuit) {
             return new CircuitTreeItem(element);
-        } else if ('address' in element) {
-            return new CallbackAddrTreeItem(element.address);
-        } else if ('queries' in element) {
-            return new QueryHeaderItem(element.queries as Query[]);
+        } else if ('type' in element) {
+            if (element.type === 'inputFile') {
+                return new InputFileTreeItem(vscode.workspace.asRelativePath(element.query.inputPath.path));
+            } else if (element.type === 'callbackAddress') {
+                return new CallbackAddrTreeItem(element.query.callbackAddress);
+            } else {
+                return new RefundAddrTreeItem(element.query.refundAddress);
+            }
+        } else if ('queries' in element && 'circuit' in element) {
+            return new QueryHeaderItem(element.queries as Query[], element.circuit as Circuit);
         } else {
-            return new QueryTreeItem(element);
+            return new QueryTreeItem(element.query, element.circuit);
         }
     }
 
-    getChildren(element?: Circuit | Query | undefined): Array<TreeElem> | undefined {
+    getChildren(element?: TreeElem | undefined): Array<TreeElem> | undefined {
         if (element === undefined) {
             return this.stateStore.getState().circuits;
         } else if (element instanceof Circuit) {
-            return [{queries: element.queries}];
+            return [{queries: element.queries, circuit: element}];
         } else if ('queries' in element) {
-            return element.queries as Query[];
-        } else if (element instanceof Query) {
-            return [{address: element.callbackAddress}];
+            const children = [];
+            for (const query of element.queries) {
+                children.push({query: query, circuit: element.circuit});
+            }
+            return children;
+        } else if ('query' in element) {
+            return [{query: element.query, type: 'inputFile'},{query: element.query, type: 'callbackAddress'}, {query: element.query, type: 'refundAddress'}];
         }
     }
 }

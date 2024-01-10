@@ -2,12 +2,14 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { Circuit, CircuitSource } from '../models/circuit';
 import { extractCircuitName } from '../utils';
+import { Query } from '../models/query';
 
 interface SerializedState {
     circuits: Array<{
         filePath: string,
         functionName: string,
-        buildPath: string
+        buildPath: string,
+        queries: Query[],
     }>
 }
 
@@ -29,6 +31,7 @@ export class StateStore {
                 buildPath: circuit.buildPath.toString(),
                 filePath: circuit.source.filePath.toString(),
                 functionName: circuit.source.functionName,
+                queries: circuit.queries
             });
         }
         return serialized;
@@ -39,11 +42,13 @@ export class StateStore {
             circuits: []
         };
         for (const circuit of state.circuits) {
-            deserialized.circuits.push(new Circuit(
+            const newCircuit = new Circuit(
                 new CircuitSource(vscode.Uri.parse(circuit.filePath), circuit.functionName),
                 vscode.Uri.parse(circuit.buildPath),
                 undefined,
-            ));
+            );
+            newCircuit.queries = circuit.queries;
+            deserialized.circuits.push(newCircuit);
         }
         return deserialized;
     }
