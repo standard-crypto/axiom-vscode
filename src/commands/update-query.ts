@@ -3,6 +3,7 @@ import { Query } from '../models/query';
 import { CircuitsTree } from '../views/circuits-tree';
 import { Circuit } from '../models/circuit';
 import { StateStore } from '../state';
+import * as path from 'path';
 
 export const COMMAND_ID_RENAME_QUERY = 'axiom-crypto.rename-query';
 export const COMMAND_ID_DELETE_QUERY = 'axiom-crypto.delete-query';
@@ -20,7 +21,7 @@ export class RenameQuery implements vscode.Disposable {
                 if (updatedName !== undefined) {
                     treeItem.query.name = updatedName;
                     const buildPathPrefix = treeItem.circuit.buildPath.path.substring(0, treeItem.circuit.buildPath.path.lastIndexOf('/'));
-                    const outputPath = (buildPathPrefix + '/' + treeItem.circuit.name + '/' + updatedName + '/output.json').replaceAll('//', '/');
+                    const outputPath = path.join(buildPathPrefix, treeItem.circuit.name, updatedName, 'output.json');
                     treeItem.query.outputPath = vscode.Uri.parse(outputPath);
                     circuitsTree.refresh();
                 }

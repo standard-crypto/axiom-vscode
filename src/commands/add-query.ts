@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Circuit } from '../models/circuit';
 import { Query } from '../models/query';
 import { CircuitsTree } from '../views/circuits-tree';
+import * as path from 'path';
 
 export const COMMAND_ID_ADD_QUERY = 'axiom-crypto.add-query';
 
@@ -13,7 +14,7 @@ export class AddQuery implements vscode.Disposable {
                 vscode.window.showInformationMessage('Add Query');
                 const queryName = 'query' + (treeItem.circuit.queries.length + 1).toString();
                 const buildPathPrefix = treeItem.circuit.buildPath.path.substring(0, treeItem.circuit.buildPath.path.lastIndexOf('/'));
-                const outputPath = (buildPathPrefix + '/' + treeItem.circuit.name + '/' + queryName + '/output.json').replaceAll('//', '/');
+                const outputPath = path.join(buildPathPrefix, treeItem.circuit.name, queryName, 'output.json');
                 treeItem.circuit.queries.push(new Query({
                     circuit: treeItem.circuit,
                     name: queryName,
