@@ -2,6 +2,10 @@ import * as vscode from "vscode";
 import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
 import { Circuit } from "../models/circuit";
+import {
+  getProviderOrShowError,
+  assertQueryIsValid,
+} from "../utils/validation";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";
 
@@ -15,16 +19,17 @@ export class Run implements vscode.Disposable {
     this.context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_RUN,
-        async (treeItem: { query: Query; circuit: Circuit }) => {
-          console.log("Run", treeItem.query);
+        async ({ query, circuit }: { query: Query; circuit: Circuit }) => {
+          console.log("Run", query);
+
+          // make sure the Query has all its values set
+          if (!assertQueryIsValid(query)) {
+            return;
+          }
 
           // make sure provider is set
-          const provider: string =
-            vscode.workspace.getConfiguration().get("axiom.providerURI") ?? "";
-          if (provider.length === 0) {
-            vscode.window.showErrorMessage(
-              "You must set a provider URI before compiling",
-            );
+          const provider = await getProviderOrShowError();
+          if (provider === undefined) {
             return;
           }
 
@@ -37,19 +42,19 @@ export class Run implements vscode.Disposable {
             async (progress) => {
               progress.report({ increment: 0, message: "Running query..." });
 
-              await run(treeItem.circuit.source.filePath.fsPath, {
+              await run(circuit.source.filePath.fsPath, {
                 stats: false,
-                function: treeItem.circuit.source.functionName,
-                build: treeItem.circuit.buildPath.fsPath,
-                output: treeItem.query.outputPath.fsPath,
-                inputs: treeItem.query.inputPath.fsPath,
+                function: circuit.source.functionName,
+                build: circuit.buildPath.fsPath,
+                output: query.outputPath.fsPath,
+                inputs: query.inputPath.fsPath,
                 provider: provider,
               });
 
               progress.report({
                 increment: 100,
                 message: `Output written to ${vscode.workspace.asRelativePath(
-                  treeItem.query.outputPath,
+                  query.outputPath,
                 )}`,
               });
               await new Promise((resolve) => {

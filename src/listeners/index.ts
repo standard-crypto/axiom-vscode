@@ -21,7 +21,7 @@ export function registerCustomListeners(
     vscode.workspace.onDidChangeConfiguration(async (e) => {
       if (e.affectsConfiguration("axiom")) {
         // update local state from the new settings
-        await stateStore.loadFromExtensionSettings();
+        await stateStore.reloadFromExtensionSettings();
 
         // re-draw the circuits tree view
         circuitsTree.refresh();
@@ -68,7 +68,7 @@ class CircuitsPatternFsWatcher {
     console.log(`${uri.fsPath} changed, refreshing state`);
 
     // update local state from the new settings
-    await this._stateStore.loadFromExtensionSettings();
+    await this._stateStore.reloadFromExtensionSettings();
 
     // re-draw the circuits tree view
     this._circuitsTree.refresh();

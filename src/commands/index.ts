@@ -32,14 +32,22 @@ export function registerCommands(
   context.subscriptions.push(new CompileAll(context));
   context.subscriptions.push(new Run(context));
   context.subscriptions.push(new SendQuery(context));
-  context.subscriptions.push(new AddQuery(context, circuitsTree));
-  context.subscriptions.push(new RenameQuery(context, circuitsTree));
+  context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));
+  context.subscriptions.push(
+    new RenameQuery(context, circuitsTree, stateStore),
+  );
   context.subscriptions.push(
     new DeleteQuery(context, circuitsTree, stateStore),
   );
-  context.subscriptions.push(new UpdateQueryInput(context, circuitsTree));
-  context.subscriptions.push(new UpdateQueryCallback(context, circuitsTree));
-  context.subscriptions.push(new UpdateQueryRefund(context, circuitsTree));
+  context.subscriptions.push(
+    new UpdateQueryInput(context, circuitsTree, stateStore),
+  );
+  context.subscriptions.push(
+    new UpdateQueryCallback(context, circuitsTree, stateStore),
+  );
+  context.subscriptions.push(
+    new UpdateQueryRefund(context, circuitsTree, stateStore),
+  );
   context.subscriptions.push(new ShowCircuitSource(context));
   context.subscriptions.push(new ConfigureParameters(context));
   context.subscriptions.push(new RefreshConfig(context, circuitsTree));

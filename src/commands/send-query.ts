@@ -5,6 +5,10 @@ import { buildSendQuery } from "@axiom-crypto/client";
 import { Axiom } from "@axiom-crypto/core";
 import type { Query } from "../models/query";
 import { JsonRpcProvider, Transaction } from "ethers";
+import {
+  assertQueryIsValid,
+  getProviderOrShowError,
+} from "../utils/validation";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -17,17 +21,17 @@ export class SendQuery implements vscode.Disposable {
     this.context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_SEND_QUERY,
-        async (treeItem: { query: Query }) => {
-          console.log("Send Query", treeItem);
-          vscode.window.showInformationMessage("Send Query");
+        async ({ query }: { query: Query }) => {
+          console.log("Send Query", query);
+
+          // make sure the Query has all its values set
+          if (!assertQueryIsValid(query)) {
+            return;
+          }
 
           // make sure provider is set
-          const provider: string =
-            vscode.workspace.getConfiguration().get("axiom.providerURI") ?? "";
-          if (provider.length === 0) {
-            vscode.window.showErrorMessage(
-              "You must set a provider URI before compiling",
-            );
+          const provider = await getProviderOrShowError();
+          if (provider === undefined) {
             return;
           }
 
@@ -40,22 +44,22 @@ export class SendQuery implements vscode.Disposable {
           });
 
           // TODO: should run if output file does not exist
-          const outputJson = readJsonFromFile(treeItem.query.outputPath.fsPath);
+          const outputJson = readJsonFromFile(query.outputPath.fsPath);
 
           const sendQuery = await buildSendQuery({
             axiom,
             dataQuery: outputJson.dataQuery,
             computeQuery: outputJson.computeQuery,
             callback: {
-              target: treeItem.query.callbackAddress,
-              extraData: treeItem.query.callbackExtraData ?? "0x",
+              target: query.callbackAddress,
+              extraData: query.callbackExtraData ?? "0x",
             },
             options: {
-              refundee: treeItem.query.refundAddress,
+              refundee: query.refundAddress,
               //   maxFeePerGas: options.maxFeePerGas,
               //   callbackGasLimit: options.callbackGasLimit,
             },
-            caller: treeItem.query.refundAddress,
+            caller: query.refundAddress,
           });
 
           const rpcProvider = new JsonRpcProvider(provider, chainId);

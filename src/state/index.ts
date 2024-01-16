@@ -9,56 +9,80 @@ interface SerializedState {
     filePath: string;
     functionName: string;
     buildPath: string;
-    defaultInputs: string;
-    queries: Query[];
+    defaultInputs?: string;
+    queries: Array<SerializedQuery>;
   }>;
+}
+
+interface SerializedQuery {
+  name: string;
+  outputPath: string;
+  inputPath?: string;
+  callbackAddress?: `0x${string}`;
+  callbackExtraData?: `0x${string}`;
+  refundAddress?: `0x${string}`;
+  // sendQueryArgs?: Awaited<ReturnType<typeof buildSendQuery>>;
+  txId?: string;
 }
 
 export interface State {
   circuits: Circuit[];
 }
 
-interface QueryConfig {
-  name: string;
-  inputPath: string;
-  outputPath: string;
-  callbackAddress: string;
-  refundAddress: string;
-}
-
-interface CircuitConfig {
-  name: string;
-  circuitPath: string;
-  buildPath: string;
-  defaultInputPath: string;
-  queries: QueryConfig[];
-}
-
 export class StateStore {
   private static _STORAGE_KEY = "circuits";
+  private _loaded: Promise<void>;
 
-  constructor(private context: vscode.ExtensionContext) {}
+  constructor(private context: vscode.ExtensionContext) {
+    // If there is no pre-existing state already stored, then it needs to be loaded in
+    // from crawling the workspace's files
+    if (
+      this.context.workspaceState.get<SerializedState>(
+        StateStore._STORAGE_KEY,
+      ) === undefined
+    ) {
+      this._loaded = this.reloadFromExtensionSettings();
+    } else {
+      this._loaded = Promise.resolve();
+    }
+  }
 
   private _serializeState(state: State): SerializedState {
     const serialized: SerializedState = {
       circuits: [],
     };
     for (const circuit of state.circuits) {
+      const serializedQueries = new Array<SerializedQuery>();
+      for (const query of circuit.queries) {
+        serializedQueries.push({
+          name: query.name,
+          outputPath: query.outputPath.path,
+          callbackAddress: query.callbackAddress,
+          inputPath: query.inputPath?.fsPath,
+          callbackExtraData: query.callbackExtraData,
+          refundAddress: query.refundAddress,
+          txId: query.txId,
+        });
+      }
       serialized.circuits.push({
         buildPath: circuit.buildPath.toString(),
         filePath: circuit.source.filePath.toString(),
         functionName: circuit.source.functionName,
-        defaultInputs: circuit.defaultInputs.path,
-        queries: circuit.queries,
+        defaultInputs: circuit.defaultInputs?.path,
+        queries: serializedQueries,
       });
     }
     return serialized;
   }
 
-  private _deserializeState(state: SerializedState): State {
+  private _deserializeState(state?: SerializedState): State {
     const deserialized: State = {
       circuits: [],
     };
+    if (state === undefined) {
+      return deserialized;
+    }
+
     for (const circuit of state.circuits) {
       const newCircuit = new Circuit(
         new CircuitSource(
@@ -66,15 +90,34 @@ export class StateStore {
           circuit.functionName,
         ),
         vscode.Uri.parse(circuit.buildPath),
-        vscode.Uri.parse(circuit.defaultInputs),
+        circuit.defaultInputs === undefined
+          ? undefined
+          : vscode.Uri.parse(circuit.defaultInputs),
       );
-      newCircuit.queries = circuit.queries;
+      const queries = new Array<Query>();
+      for (const serializedQuery of circuit.queries) {
+        const query = new Query({
+          name: serializedQuery.name,
+          circuit: newCircuit,
+          outputPath: vscode.Uri.parse(serializedQuery.outputPath),
+          callbackAddress: serializedQuery.callbackAddress,
+          inputPath:
+            serializedQuery.inputPath === undefined
+              ? undefined
+              : vscode.Uri.parse(serializedQuery.inputPath),
+          refundAddress: serializedQuery.refundAddress,
+        });
+        query.callbackExtraData = serializedQuery.callbackExtraData;
+        query.txId = serializedQuery.txId;
+        queries.push(query);
+      }
+      newCircuit.queries = queries;
       deserialized.circuits.push(newCircuit);
     }
     return deserialized;
   }
 
-  async loadFromExtensionSettings(): Promise<State> {
+  async reloadFromExtensionSettings(): Promise<void> {
     const config = vscode.workspace.getConfiguration("axiom");
     const buildDirectory =
       config.get<string>("buildDirectory") ?? "build/axiom";
@@ -84,88 +127,39 @@ export class StateStore {
       circuits: [],
     };
 
-    // first load circuits from settings.json
-    const circuitsConfig = config.get<Array<CircuitConfig>>("circuits") ?? [];
-    const savedCircuits = this.loadCircuitsFromSettingsJson(circuitsConfig);
-    const existingCircuits: Set<string> = new Set();
-
-    // add saved circuits to state
-    state.circuits.push(...savedCircuits);
-    savedCircuits.map((circuit) =>
-      existingCircuits.add(circuit.source.filePath.path),
-    );
-
-    // then check workspace for circuit files
+    // check workspace for circuit files
     const circuitFiles = await vscode.workspace.findFiles(
       circuitFilesPattern,
       "**​/node_modules/**",
     );
-    const loadedCircuits = this.loadCircuitsFromWorkspace(
-      existingCircuits,
+    state.circuits = this._loadCircuitsFromWorkspace(
       circuitFiles,
       buildDirectory,
     );
 
-    // add loaded circuits to state
-    state.circuits.push(...loadedCircuits);
-
-    this.saveState(state);
-    return state;
-  }
-
-  loadCircuitsFromSettingsJson(circuitsConfig: CircuitConfig[]): Circuit[] {
-    const circuits = [];
-    if (vscode.workspace.workspaceFolders) {
-      const rootPath = vscode.workspace.workspaceFolders[0].uri;
-
-      for (const circuit of circuitsConfig) {
-        const savedCircuit = new Circuit(
-          new CircuitSource(
-            vscode.Uri.parse(path.join(rootPath.path, circuit.circuitPath)),
-            circuit.name,
-          ),
-          vscode.Uri.parse(path.join(rootPath.path, circuit.buildPath)),
-          circuit.defaultInputPath !== "/" && circuit.defaultInputPath !== ""
-            ? vscode.Uri.parse(
-                path.join(rootPath.path, circuit.defaultInputPath),
-              )
-            : vscode.Uri.parse("/"),
-        );
-        const queries = [];
-        for (const query of circuit.queries) {
-          queries.push(
-            new Query({
-              name: query.name,
-              inputPath:
-                query.inputPath !== "/" && query.inputPath !== ""
-                  ? vscode.Uri.parse(path.join(rootPath.path, query.inputPath))
-                  : vscode.Uri.parse("/"),
-              outputPath: vscode.Uri.parse(
-                path.join(rootPath.path, query.outputPath),
-              ),
-              callbackAddress: query.callbackAddress as `0x${string}`,
-              refundAddress: query.refundAddress as `0x${string}`,
-            }),
-          );
-        }
-        savedCircuit.queries = queries;
-        circuits.push(savedCircuit);
-      }
+    // If there were existing queries already saved, then let's try to
+    // re-attach them to this circuit.
+    // If there's only one circuit in the workspace then it's reasonable
+    // to assume that every query that's saved should be linked to that
+    // circuit. If there's more than one circuit, then it will be difficult
+    // to know which query should be assigned to which circuit if the
+    // circuit definitions changed
+    const previousState = this._deserializeState(
+      this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY),
+    );
+    if (state.circuits.length === 1 && previousState.circuits.length === 1) {
+      state.circuits[0].queries = previousState.circuits[0].queries;
     }
-    return circuits;
+
+    await this._saveState(state);
   }
 
-  loadCircuitsFromWorkspace(
-    existingCircuitFiles: Set<string>,
+  private _loadCircuitsFromWorkspace(
     circuitFiles: vscode.Uri[],
     buildDirectory: string,
   ): Circuit[] {
     const circuits = [];
     for (const circuitFileUri of circuitFiles) {
-      // exclude circuits loaded from settings.json
-      if (existingCircuitFiles.has(circuitFileUri.path)) {
-        continue;
-      }
       const circuitName = extractCircuitName(circuitFileUri);
       if (circuitName === undefined) {
         throw new Error(
@@ -173,89 +167,47 @@ export class StateStore {
         );
       }
 
-      if (vscode.workspace.workspaceFolders) {
-        const rootPath = vscode.workspace.workspaceFolders[0].uri;
-        const buildPath = path.join(
-          rootPath.path,
-          buildDirectory,
-          `${circuitName}.json`,
-        );
+      const buildPath = path.join(
+        this.context.asAbsolutePath(buildDirectory),
+        `${circuitName}.json`,
+      );
 
-        const circuit = new Circuit(
-          new CircuitSource(circuitFileUri, circuitName),
-          vscode.Uri.parse(buildPath),
-          vscode.Uri.parse(""),
-        );
-        circuits.push(circuit);
-      }
+      const circuit = new Circuit(
+        new CircuitSource(circuitFileUri, circuitName),
+        vscode.Uri.parse(buildPath),
+        undefined,
+      );
+      circuits.push(circuit);
     }
     return circuits;
   }
 
   async updateState(circuit: Circuit): Promise<void> {
-    const state = this.context.workspaceState.get<SerializedState>(
-      StateStore._STORAGE_KEY,
+    const state = this._deserializeState(
+      this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY),
     );
-    if (state === undefined) {
-      this.saveState({ circuits: [circuit] });
-    } else {
-      const deserializedState = this._deserializeState(state);
-      for (const [
-        index,
-        existingCircuit,
-      ] of deserializedState.circuits.entries()) {
-        if (
-          existingCircuit.source.filePath.path === circuit.source.filePath.path
-        ) {
-          deserializedState.circuits[index] = circuit;
-        }
+    for (const [index, existingCircuit] of state.circuits.entries()) {
+      if (
+        existingCircuit.source.filePath.path === circuit.source.filePath.path
+      ) {
+        state.circuits[index] = circuit;
       }
-      this.saveState(deserializedState);
     }
+    console.log("updateState", state);
+    await this._saveState(state);
   }
 
-  getState(): State {
-    const state = this.context.workspaceState.get<SerializedState>(
-      StateStore._STORAGE_KEY,
+  async getState(): Promise<State> {
+    await this._loaded;
+
+    const state = this._deserializeState(
+      this.context.workspaceState.get<SerializedState>(StateStore._STORAGE_KEY),
     );
-    if (state === undefined) {
-      return {
-        circuits: [],
-      };
-    }
-    const deserializedState = this._deserializeState(state);
-    this.saveState(deserializedState);
-    return deserializedState;
+    return state;
   }
 
-  saveState(state: State) {
-    const config = vscode.workspace.getConfiguration("axiom");
-    const circuits = [];
-    for (const circuit of state.circuits) {
-      const queries = [];
-      for (const query of circuit.queries) {
-        queries.push({
-          name: query.name,
-          inputPath: vscode.workspace.asRelativePath(query.inputPath.path),
-          outputPath: vscode.workspace.asRelativePath(query.outputPath.path),
-          callbackAddress: query.callbackAddress,
-          refundAddress: query.refundAddress,
-        });
-      }
-      circuits.push({
-        name: circuit.source.functionName,
-        circuitPath: vscode.workspace.asRelativePath(
-          circuit.source.filePath.path,
-        ),
-        buildPath: vscode.workspace.asRelativePath(circuit.buildPath.path),
-        defaultInputPath: vscode.workspace.asRelativePath(
-          circuit.defaultInputs.path,
-        ),
-        queries: queries,
-      });
-    }
-    config.update("circuits", circuits);
-    this.context.workspaceState.update(
+  private async _saveState(state: State) {
+    await this.context.workspaceState.update(
       StateStore._STORAGE_KEY,
       this._serializeState(state),
     );

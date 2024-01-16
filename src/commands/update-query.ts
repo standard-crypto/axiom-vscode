@@ -15,30 +15,32 @@ export const COMMAND_ID_UPDATE_QUERY_REFUND =
 
 export class RenameQuery implements vscode.Disposable {
   constructor(
-    private context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     circuitsTree: CircuitsTree,
+    stateStore: StateStore,
   ) {
-    this.context.subscriptions.push(
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_RENAME_QUERY,
-        async (treeItem: { query: Query; circuit: Circuit }) => {
-          console.log("Rename Query", treeItem);
+        async ({ query }: { query: Query }) => {
+          console.log("Rename Query", query);
           const updatedName = await vscode.window.showInputBox({
-            value: treeItem.query.name,
+            value: query.name,
           });
           if (updatedName !== undefined) {
-            treeItem.query.name = updatedName;
-            const buildPathPrefix = treeItem.circuit.buildPath.path.substring(
+            query.name = updatedName;
+            const buildPathPrefix = query.circuit.buildPath.path.substring(
               0,
-              treeItem.circuit.buildPath.path.lastIndexOf("/"),
+              query.circuit.buildPath.path.lastIndexOf("/"),
             );
             const outputPath = path.join(
               buildPathPrefix,
-              treeItem.circuit.name,
+              query.circuit.name,
               updatedName,
               "output.json",
             );
-            treeItem.query.outputPath = vscode.Uri.parse(outputPath);
+            query.outputPath = vscode.Uri.parse(outputPath);
+            stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }
         },
@@ -50,11 +52,11 @@ export class RenameQuery implements vscode.Disposable {
 
 export class DeleteQuery implements vscode.Disposable {
   constructor(
-    private context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     circuitsTree: CircuitsTree,
     stateStore: StateStore,
   ) {
-    this.context.subscriptions.push(
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_DELETE_QUERY,
         async (treeItem: { query: Query | undefined; circuit: Circuit }) => {
@@ -74,19 +76,26 @@ export class DeleteQuery implements vscode.Disposable {
 
 export class UpdateQueryInput implements vscode.Disposable {
   constructor(
-    private context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     circuitsTree: CircuitsTree,
+    stateStore: StateStore,
   ) {
-    this.context.subscriptions.push(
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_UPDATE_QUERY_INPUT,
-        async (treeItem: { query: Query }) => {
-          console.log("Update Query Input", treeItem);
-          const updatedInput = await vscode.window.showOpenDialog();
+        async ({ query }: { query: Query }) => {
+          console.log("Update Query Input", { query });
+          const updatedInput = await vscode.window.showOpenDialog({
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: { JSON: ["json"] },
+            openLabel: "Select as Input",
+            title: "Select File for Query Input",
+          });
           if (updatedInput !== undefined) {
             const inputPath = updatedInput[0].path;
-            console.log(inputPath);
-            treeItem.query.inputPath = vscode.Uri.parse(inputPath);
+            query.inputPath = vscode.Uri.parse(inputPath);
+            await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }
         },
@@ -98,22 +107,22 @@ export class UpdateQueryInput implements vscode.Disposable {
 
 export class UpdateQueryCallback implements vscode.Disposable {
   constructor(
-    private context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     circuitsTree: CircuitsTree,
+    stateStore: StateStore,
   ) {
-    this.context.subscriptions.push(
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_UPDATE_QUERY_CALLBACK,
-        async (treeItem: { query: Query }) => {
-          console.log("Update Query Callback", treeItem);
+        async ({ query }: { query: Query }) => {
+          console.log("Update Query Callback", query);
           const updatedCallback = await vscode.window.showInputBox({
-            value: treeItem.query.callbackAddress,
+            value: query.callbackAddress,
           });
           if (updatedCallback !== undefined) {
-            treeItem.query.callbackAddress = updatedCallback as `0x${string}`;
-            console.log(
-              `updated query callback - ${treeItem.query.callbackAddress}`,
-            );
+            query.callbackAddress = updatedCallback as `0x${string}`;
+            console.log(`updated query callback - ${query.callbackAddress}`);
+            await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }
         },
@@ -125,19 +134,21 @@ export class UpdateQueryCallback implements vscode.Disposable {
 
 export class UpdateQueryRefund implements vscode.Disposable {
   constructor(
-    private context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     circuitsTree: CircuitsTree,
+    stateStore: StateStore,
   ) {
-    this.context.subscriptions.push(
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_UPDATE_QUERY_REFUND,
-        async (treeItem: { query: Query }) => {
-          console.log("Update Query Refund", treeItem);
+        async ({ query }: { query: Query }) => {
+          console.log("Update Query Refund", query);
           const updatedRefund = await vscode.window.showInputBox({
-            value: treeItem.query.refundAddress,
+            value: query.refundAddress,
           });
           if (updatedRefund !== undefined) {
-            treeItem.query.refundAddress = updatedRefund as `0x${string}`;
+            query.refundAddress = updatedRefund as `0x${string}`;
+            await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }
         },
