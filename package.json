@@ -45,64 +45,6 @@
             "type": "string",
             "default": "build/axiom",
             "description": "Path where circuit outputs from compiled circuits will be written"
-          },
-          "axiom.circuits": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "title": "circuit",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Circuit Name"
-                },
-                "circuitPath": {
-                  "type": "string",
-                  "description": "Circuit File Path"
-                },
-                "buildPath": {
-                  "type": "string",
-                  "description": "Circuit Build File Path"
-                },
-                "defaultInputPath": {
-                  "type": "string",
-                  "description": "Default Input File Path"
-                },
-                "queries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "title": "query",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Query Name"
-                      },
-                      "inputPath": {
-                        "type": "string",
-                        "description": "Input File Path"
-                      },
-                      "outputPath": {
-                        "type": "string",
-                        "description": "Output File Path"
-                      },
-                      "callbackAddress": {
-                        "type": "string",
-                        "description": "Callback Address"
-                      },
-                      "refundAddress": {
-                        "type": "string",
-                        "description": "Refund Address"
-                      }
-                    }
-                  }
-                },
-                "default": [],
-                "description": "Queries Configuration"
-              }
-            },
-            "default": [],
-            "description": "Circuits Configuration"
           }
         }
       }

@@ -1,28 +1,30 @@
 import * as vscode from "vscode";
-import type { buildSendQuery } from "@axiom-crypto/client";
 import type { Circuit } from "./circuit";
 
 export class Query {
   name: string;
-  inputPath: vscode.Uri;
+  circuit: Circuit;
+  inputPath?: vscode.Uri;
   outputPath: vscode.Uri;
 
-  callbackAddress: `0x${string}`;
+  callbackAddress?: `0x${string}`;
   callbackExtraData?: `0x${string}`;
 
-  refundAddress: `0x${string}`;
+  refundAddress?: `0x${string}`;
 
-  sendQueryArgs?: Awaited<ReturnType<typeof buildSendQuery>>;
+  // sendQueryArgs?: Awaited<ReturnType<typeof buildSendQuery>>;
   txId?: string;
 
   constructor(args: {
     name: string;
-    inputPath: vscode.Uri;
+    circuit: Circuit;
+    inputPath?: vscode.Uri;
     outputPath: vscode.Uri;
-    callbackAddress: `0x${string}`;
-    refundAddress: `0x${string}`;
+    callbackAddress?: `0x${string}`;
+    refundAddress?: `0x${string}`;
   }) {
     this.name = args.name;
+    this.circuit = args.circuit;
     this.inputPath = args.inputPath;
     this.outputPath = args.outputPath;
     this.callbackAddress = args.callbackAddress;

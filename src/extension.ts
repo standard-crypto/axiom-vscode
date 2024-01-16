@@ -7,7 +7,7 @@ import { registerCustomListeners } from "./listeners";
 export async function activate(context: vscode.ExtensionContext) {
   // create and populate local state store
   const stateStore = new StateStore(context);
-  await stateStore.loadFromExtensionSettings();
+  await stateStore.reloadFromExtensionSettings();
 
   // create the tree view
   const circuitsTree = new CircuitsTree(stateStore);

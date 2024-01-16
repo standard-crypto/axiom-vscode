@@ -15,6 +15,8 @@ class CircuitTreeItem extends vscode.TreeItem {
     this.contextValue = "circuit";
     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
     this.description = vscode.workspace.asRelativePath(circuit.source.filePath);
+    this.tooltip =
+      "An Axiom circuit. See extension settings to update the file pattern for discovering circuit files.";
   }
 }
 
@@ -26,43 +28,58 @@ class QueryHeaderItem extends vscode.TreeItem {
     super("Queries");
     this.queries = queries;
     this.contextValue = "queryHeader";
-    this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-    this.description = "circuit queries";
+    if (queries.length > 0) {
+      this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+    }
+    this.tooltip =
+      "Queries represent separate invocations of a circuit, each with distinct inputs and callback addresses.";
   }
 }
 
 class QueryTreeItem extends vscode.TreeItem {
   constructor(
     private query: Query,
-    private circuit: Circuit,
+    circuit: Circuit,
   ) {
     super(query.name);
     this.contextValue = "query";
     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+    this.tooltip =
+      "A single Axiom query. Its input file, callback address, and refund address must be set before a query may be submitted.";
   }
 }
 
 class InputFileTreeItem extends vscode.TreeItem {
-  constructor(private inputFile: string) {
-    super("file: ");
+  constructor(inputPath?: vscode.Uri) {
+    super("Input: ");
     this.contextValue = "inputFile";
-    this.description = inputFile;
+    if (inputPath === undefined) {
+      this.description = "[unset]";
+    } else {
+      this.description = vscode.workspace.asRelativePath(inputPath.path);
+    }
+    this.tooltip =
+      "A JSON file containing the circuit input values to use for this query";
   }
 }
 
 class CallbackAddrTreeItem extends vscode.TreeItem {
-  constructor(private callbackAddress: string) {
+  constructor(callbackAddress?: string) {
     super("Callback: ");
     this.contextValue = "callbackAddress";
-    this.description = callbackAddress;
+    this.description = callbackAddress ?? "[unset]";
+    this.tooltip =
+      "The address of an on-chain contract that will be called by Axiom when the query completes";
   }
 }
 
 class RefundAddrTreeItem extends vscode.TreeItem {
-  constructor(private refundAddress: string) {
+  constructor(refundAddress?: string) {
     super("Refund Address: ");
     this.contextValue = "refundAddress";
-    this.description = refundAddress;
+    this.description = refundAddress || "[unset]";
+    this.tooltip =
+      "An address to receive any gas refund from executing the query";
   }
 }
 
@@ -91,9 +108,7 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
       return new CircuitTreeItem(element);
     } else if ("type" in element) {
       if (element.type === "inputFile") {
-        return new InputFileTreeItem(
-          vscode.workspace.asRelativePath(element.query.inputPath.path),
-        );
+        return new InputFileTreeItem(element.query.inputPath);
       } else if (element.type === "callbackAddress") {
         return new CallbackAddrTreeItem(element.query.callbackAddress);
       } else {
@@ -109,22 +124,35 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     }
   }
 
-  getChildren(element?: TreeElem | undefined): Array<TreeElem> | undefined {
-    if (element === undefined) {
-      return this.stateStore.getState().circuits;
-    } else if (element instanceof Circuit) {
-      return [{ queries: element.queries, circuit: element }];
-    } else if ("queries" in element) {
+  async getChildren(
+    parent?: TreeElem | undefined,
+  ): Promise<Array<TreeElem> | undefined> {
+    // No parent -> return list of Circuits
+    if (parent === undefined) {
+      const state = await this.stateStore.getState();
+      return state.circuits;
+    }
+
+    // Parent is a Circuit -> return Queries
+    else if (parent instanceof Circuit) {
+      return [{ queries: parent.queries, circuit: parent }];
+    }
+
+    // Parent is a list of Queries -> return a single Query
+    else if ("queries" in parent) {
       const children = [];
-      for (const query of element.queries) {
-        children.push({ query: query, circuit: element.circuit });
+      for (const query of parent.queries) {
+        children.push({ query: query, circuit: parent.circuit });
       }
       return children;
-    } else if ("query" in element) {
+    }
+
+    // Parent is a single Query -> return a set of widgets for configuring the Query
+    else if ("query" in parent) {
       return [
-        { query: element.query, type: "inputFile" },
-        { query: element.query, type: "callbackAddress" },
-        { query: element.query, type: "refundAddress" },
+        { query: parent.query, type: "inputFile" },
+        { query: parent.query, type: "callbackAddress" },
+        { query: parent.query, type: "refundAddress" },
       ];
     }
   }

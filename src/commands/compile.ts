@@ -27,16 +27,19 @@ export class Compile implements vscode.Disposable {
           }
 
           // set default inputs
-          if (circuit.defaultInputs.path === "/") {
+          if (circuit.defaultInputs === undefined) {
             for (const query of circuit.queries) {
-              if (query.inputPath.path !== "/") {
+              if (query.inputPath !== undefined) {
                 circuit.defaultInputs = query.inputPath;
               }
             }
           }
 
           // make sure default inputs are set
-          if (circuit.defaultInputs.path === "/") {
+          // TODO: this is a bit clunky, the user should be able to use
+          // an input that isn't part of a query, or they should be able
+          // to use typescript exports to define the default inputs
+          if (circuit.defaultInputs === undefined) {
             vscode.window.showErrorMessage(
               "You must add a query and set an input file before compiling",
             );
