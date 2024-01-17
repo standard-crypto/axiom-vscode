@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { COMMAND_ID_SHOW_CIRCUIT_SOURCE } from "../commands";
+import { COMMAND_ID_SHOW_SOURCE } from "../commands";
 import { Circuit } from "../models/circuit";
 import { Query } from "../models/query";
 import { StateStore } from "../state";
@@ -9,8 +9,8 @@ class CircuitTreeItem extends vscode.TreeItem {
     super(circuit.name);
     this.command = {
       title: "Show Source",
-      command: COMMAND_ID_SHOW_CIRCUIT_SOURCE,
-      arguments: [circuit],
+      command: COMMAND_ID_SHOW_SOURCE,
+      arguments: [{ path: circuit.source.filePath }],
     };
     this.contextValue = "circuit";
     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
@@ -21,13 +21,23 @@ class CircuitTreeItem extends vscode.TreeItem {
 }
 
 class CircuitDefaultInputFileTreeItem extends vscode.TreeItem {
-  constructor(private circuit: Circuit, private inputPath?: vscode.Uri | undefined,) {
+  constructor(
+    private circuit: Circuit,
+    private inputPath?: vscode.Uri | undefined,
+  ) {
     super("Default Input: ");
+    this.command = {
+      title: "Show Source",
+      command: COMMAND_ID_SHOW_SOURCE,
+      arguments: [{ path: inputPath }],
+    };
     this.contextValue = "defaultInputFile";
     if (circuit.defaultInputs === undefined) {
       this.description = "[unset]";
     } else {
-      this.description = vscode.workspace.asRelativePath(circuit.defaultInputs.path);
+      this.description = vscode.workspace.asRelativePath(
+        circuit.defaultInputs.path,
+      );
     }
     this.tooltip =
       "A JSON file containing the default input values to use for this circuit";
@@ -66,6 +76,11 @@ class QueryTreeItem extends vscode.TreeItem {
 class InputFileTreeItem extends vscode.TreeItem {
   constructor(inputPath?: vscode.Uri) {
     super("Input: ");
+    this.command = {
+      title: "Show Source",
+      command: COMMAND_ID_SHOW_SOURCE,
+      arguments: [{ path: inputPath }],
+    };
     this.contextValue = "inputFile";
     if (inputPath === undefined) {
       this.description = "[unset]";
@@ -99,7 +114,7 @@ class RefundAddrTreeItem extends vscode.TreeItem {
 
 type TreeElem =
   | Circuit
-  | { inputPath: vscode.Uri | undefined, circuit: Circuit }
+  | { inputPath: vscode.Uri | undefined; circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
   | { query: Query; type: "inputFile" | "callbackAddress" | "refundAddress" };
@@ -134,8 +149,11 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         element.queries as Query[],
         element.circuit as Circuit,
       );
-    } else if ("inputPath" in element && "circuit" in element){
-      return new CircuitDefaultInputFileTreeItem(element.circuit, element.inputPath);
+    } else if ("inputPath" in element && "circuit" in element) {
+      return new CircuitDefaultInputFileTreeItem(
+        element.circuit,
+        element.inputPath,
+      );
     } else {
       return new QueryTreeItem(element.query, element.circuit);
     }
@@ -154,9 +172,12 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
     else if (parent instanceof Circuit) {
       const config = vscode.workspace.getConfiguration("axiom");
       // return Default Input and Queries
-      if (config.get('circuitInputsProvided') === 'As separate input files') {
-        return [{inputPath: parent.defaultInputs, circuit: parent}, { queries: parent.queries, circuit: parent }];
-      // Default inputs are exported from circuit file -> return Queries
+      if (config.get("circuitInputsProvided") === "As separate input files") {
+        return [
+          { inputPath: parent.defaultInputs, circuit: parent },
+          { queries: parent.queries, circuit: parent },
+        ];
+        // Default inputs are exported from circuit file -> return Queries
       } else {
         return [{ queries: parent.queries, circuit: parent }];
       }

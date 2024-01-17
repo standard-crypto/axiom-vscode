@@ -8,6 +8,8 @@ import {
 } from "../commands/update-query";
 import { Circuit } from "../models/circuit";
 import { CONFIG_KEYS, CircuitInputsProvidedOpts } from "../config";
+import * as dotenv from "dotenv";
+import * as path from "path";
 
 export async function getProviderOrShowError(): Promise<string | undefined> {
   const provider: string = vscode.workspace
@@ -30,23 +32,20 @@ export async function getProviderOrShowError(): Promise<string | undefined> {
 }
 
 export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
-  // TODO: https://github.com/standard-crypto/axiom-vscode/issues/27
-  const privateKey: string = vscode.workspace
-    .getConfiguration()
-    .get(`axiom.${CONFIG_KEYS.PrivateKey}`, "");
-  if (privateKey.length === 0) {
-    const choice = await vscode.window.showErrorMessage(
-      "You must provide a private key to use when submitting a Query",
-      "Open Axiom settings",
-    );
-    if (choice === "Open Axiom settings") {
-      vscode.commands.executeCommand(
-        "workbench.action.openWorkspaceSettings",
-        "axiom",
-      );
-    }
-    return;
+  const config = vscode.workspace.getConfiguration("axiom");
+  const privateKeyPath: string | undefined = config.get("privateKeyPath");
+
+  if (vscode.workspace.workspaceFolders === undefined) {
+    throw new Error("Expected at least one open VSCode workspace");
   }
+
+  const privateKeyFile = path.join(
+    vscode.workspace.workspaceFolders[0].uri.path,
+    privateKeyPath ?? ".env",
+  );
+
+  dotenv.config({ path: privateKeyFile ?? ".env" });
+  const privateKey = process.env.PRIVATE_KEY;
   return privateKey;
 }
 

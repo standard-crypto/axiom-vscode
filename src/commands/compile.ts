@@ -31,7 +31,10 @@ export class Compile implements vscode.Disposable {
 
           // make sure default inputs are set
           const config = vscode.workspace.getConfiguration("axiom");
-          if (config.get('circuitInputsProvided') === 'As separate input files' && circuit.defaultInputs === undefined) {
+          if (
+            config.get("circuitInputsProvided") === "As separate input files" &&
+            circuit.defaultInputs === undefined
+          ) {
             vscode.window.showErrorMessage(
               "You must set a default input file before compiling",
             );

@@ -68,7 +68,7 @@ export class StateStore {
         buildPath: circuit.buildPath.toString(),
         filePath: circuit.source.filePath.toString(),
         functionName: circuit.source.functionName,
-        defaultInputs: circuit.defaultInputs?.path,
+        defaultInputs: circuit.defaultInputs?.toString(),
         queries: serializedQueries,
       });
     }
@@ -139,7 +139,7 @@ export class StateStore {
     );
 
     // If there were existing queries already saved, then let's try to
-    // re-attach them to this circuit.
+    // re-attach them to this circuit. The same goes for default inputs.
     // If there's only one circuit in the workspace then it's reasonable
     // to assume that every query that's saved should be linked to that
     // circuit. If there's more than one circuit, then it will be difficult
@@ -150,6 +150,7 @@ export class StateStore {
     );
     if (state.circuits.length === 1 && previousState.circuits.length === 1) {
       state.circuits[0].queries = previousState.circuits[0].queries;
+      state.circuits[0].defaultInputs = previousState.circuits[0].defaultInputs;
     }
 
     await this._saveState(state);

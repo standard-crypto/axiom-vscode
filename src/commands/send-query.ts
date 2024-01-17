@@ -177,7 +177,10 @@ export class SendQuery implements vscode.Disposable {
                   if (choice === "View Transaction on Explorer") {
                     vscode.env.openExternal(
                       vscode.Uri.parse(
-                        createExplorerLink(transactionResponse.hash, `${chainId}`),
+                        createExplorerLink(
+                          transactionResponse.hash,
+                          `${chainId}`,
+                        ),
                       ),
                     );
                   }
