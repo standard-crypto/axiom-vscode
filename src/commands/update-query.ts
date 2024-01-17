@@ -4,6 +4,7 @@ import { CircuitsTree } from "../views/circuits-tree";
 import { Circuit } from "../models/circuit";
 import { StateStore } from "../state";
 import * as path from "path";
+import { ethers } from "ethers";
 
 export const COMMAND_ID_RENAME_QUERY = "axiom-crypto.rename-query";
 export const COMMAND_ID_DELETE_QUERY = "axiom-crypto.delete-query";
@@ -117,10 +118,20 @@ export class UpdateQueryCallback implements vscode.Disposable {
         async ({ query }: { query: Query }) => {
           console.log("Update Query Callback", query);
           const updatedCallback = await vscode.window.showInputBox({
-            value: query.callbackAddress,
+            prompt:
+              "Enter the the target contract address with the callback function to be invoked by Axiom",
+            placeHolder: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            validateInput: (input) => {
+              if (!ethers.isAddress(input)) {
+                return "Not a valid Ethereum address string";
+              }
+            },
+            ignoreFocusOut: true,
           });
           if (updatedCallback !== undefined) {
-            query.callbackAddress = updatedCallback as `0x${string}`;
+            query.callbackAddress = ethers.getAddress(
+              updatedCallback,
+            ) as `0x${string}`;
             console.log(`updated query callback - ${query.callbackAddress}`);
             await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
@@ -144,10 +155,19 @@ export class UpdateQueryRefund implements vscode.Disposable {
         async ({ query }: { query: Query }) => {
           console.log("Update Query Refund", query);
           const updatedRefund = await vscode.window.showInputBox({
-            value: query.refundAddress,
+            prompt: "Enter the address to refund excess payment to",
+            placeHolder: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            validateInput: (input) => {
+              if (!ethers.isAddress(input)) {
+                return "Not a valid Ethereum address string";
+              }
+            },
+            ignoreFocusOut: true,
           });
           if (updatedRefund !== undefined) {
-            query.refundAddress = updatedRefund as `0x${string}`;
+            query.refundAddress = ethers.getAddress(
+              updatedRefund,
+            ) as `0x${string}`;
             await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }

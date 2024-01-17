@@ -230,6 +230,7 @@
   "dependencies": {
     "@axiom-crypto/circuit": "^0.1.3",
     "@axiom-crypto/client": "^0.1.3",
+    "@metamask/etherscan-link": "^3.0.0",
     "ethers": "^6.9.0"
   }
 }
