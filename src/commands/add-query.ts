@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "path";
 import { Circuit } from "../models/circuit";
 import { Query } from "../models/query";
 import { CircuitsTree } from "../views/circuits-tree";
@@ -21,24 +22,15 @@ export class AddQuery implements vscode.Disposable {
 
           const queryName = "query" + (circuit.queries.length + 1).toString();
 
-          const buildPathPrefix = circuit.buildPath.path.substring(
-            0,
-            circuit.buildPath.path.lastIndexOf("/"),
-          );
-
-          const outputPath = vscode.Uri.joinPath(
-            vscode.Uri.parse(buildPathPrefix),
-            circuit.name,
-            queryName,
-            "output.json",
+          const buildFolder = path.dirname(circuit.buildPath.fsPath);
+          const outputPath = vscode.Uri.parse(
+            path.join(buildFolder, queryName, "output.json"),
           );
 
           const query = new Query({
             name: queryName,
             circuit: circuit,
             outputPath: outputPath,
-            refundAddress: "0x0" as `0x${string}`,
-            callbackAddress: "0x0" as `0x${string}`,
           });
           circuit.queries.push(query);
           stateStore.updateState(circuit);
@@ -46,10 +38,10 @@ export class AddQuery implements vscode.Disposable {
           vscode.window
             .showInformationMessage(
               `Added new query named '${queryName}'`,
-              "Set query input...",
+              "Set query input",
             )
             .then((choice) => {
-              if (choice === "Set query input...") {
+              if (choice === "Set query input") {
                 vscode.commands.executeCommand(COMMAND_ID_UPDATE_QUERY_INPUT, {
                   query,
                 });

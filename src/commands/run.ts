@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
-import { Circuit } from "../models/circuit";
 import {
   getProviderOrShowError,
   assertQueryIsValid,
 } from "../utils/validation";
+import { rawCompile } from "./compile";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";
 
@@ -19,7 +19,7 @@ export class Run implements vscode.Disposable {
     this.context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_RUN,
-        async ({ query, circuit }: { query: Query; circuit: Circuit }) => {
+        async ({ query }: { query: Query }) => {
           console.log("Run", query);
 
           // make sure the Query has all its values set
@@ -33,35 +33,54 @@ export class Run implements vscode.Disposable {
             return;
           }
 
-          vscode.window.withProgress(
+          await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Notification,
               title: "Axiom",
               cancellable: false,
             },
             async (progress) => {
-              progress.report({ increment: 0, message: "Running query..." });
+              // compile the circuit
+              progress.report({
+                increment: 0,
+                message: "Compiling circuit...",
+              });
+              await rawCompile(provider, query.circuit);
 
-              await run(circuit.source.filePath.fsPath, {
+              // run the query
+              progress.report({ increment: 50, message: "Running query..." });
+              await run(query.circuit.source.filePath.fsPath, {
                 stats: false,
-                function: circuit.source.functionName,
-                build: circuit.buildPath.fsPath,
+                function: query.circuit.source.functionName,
+                build: query.circuit.buildPath.fsPath,
                 output: query.outputPath.fsPath,
                 inputs: query.inputPath.fsPath,
                 provider: provider,
               });
 
+              // done
               progress.report({
                 increment: 100,
-                message: `Output written to ${vscode.workspace.asRelativePath(
-                  query.outputPath,
-                )}`,
-              });
-              await new Promise((resolve) => {
-                setTimeout(resolve, 5000);
+                message: `Success`,
               });
             },
           );
+
+          vscode.window
+            .showInformationMessage(
+              `Run result saved to ${vscode.workspace.asRelativePath(
+                query.outputPath,
+              )}`,
+              "Go to result",
+            )
+            .then(async (choice) => {
+              if (choice === "Go to result") {
+                const document = await vscode.workspace.openTextDocument(
+                  query.outputPath,
+                );
+                await vscode.window.showTextDocument(document);
+              }
+            });
         },
       ),
     );

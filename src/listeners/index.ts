@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { CircuitsTree } from "../views/circuits-tree";
 import { StateStore } from "../state";
+import { CONFIG_KEYS } from "../config";
 
 export function registerCustomListeners(
   context: vscode.ExtensionContext,
@@ -51,7 +52,7 @@ class CircuitsPatternFsWatcher {
     // register a new watcher for the glob specified in the extension's settings
     const circuitFilesPattern = vscode.workspace
       .getConfiguration("axiom")
-      .get<string>("circuitFilesPattern");
+      .get<string>(CONFIG_KEYS.CircuitFilesPattern);
     if (circuitFilesPattern === undefined) {
       return;
     }

@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import { Circuit, CircuitSource } from "../models/circuit";
 import { extractCircuitName } from "../utils";
 import { Query } from "../models/query";
+import { CONFIG_KEYS } from "../config";
 
 interface SerializedState {
   circuits: Array<{
@@ -120,8 +120,9 @@ export class StateStore {
   async reloadFromExtensionSettings(): Promise<void> {
     const config = vscode.workspace.getConfiguration("axiom");
     const buildDirectory =
-      config.get<string>("buildDirectory") ?? "build/axiom";
-    const circuitFilesPattern = config.get<string>("circuitFilesPattern") ?? "";
+      config.get<string>(CONFIG_KEYS.BuildDirectory) ?? "build/axiom";
+    const circuitFilesPattern =
+      config.get<string>(CONFIG_KEYS.CircuitFilesPattern) ?? "";
 
     const state: State = {
       circuits: [],
@@ -167,14 +168,20 @@ export class StateStore {
         );
       }
 
-      const buildPath = path.join(
-        this.context.asAbsolutePath(buildDirectory),
-        `${circuitName}.json`,
+      if (vscode.workspace.workspaceFolders === undefined) {
+        throw new Error("Expected at least one open VSCode workspace");
+      }
+
+      const buildPath = vscode.Uri.joinPath(
+        vscode.workspace.workspaceFolders[0].uri,
+        buildDirectory,
+        circuitName,
+        "build.json",
       );
 
       const circuit = new Circuit(
         new CircuitSource(circuitFileUri, circuitName),
-        vscode.Uri.parse(buildPath),
+        buildPath,
         undefined,
       );
       circuits.push(circuit);
@@ -193,7 +200,6 @@ export class StateStore {
         state.circuits[index] = circuit;
       }
     }
-    console.log("updateState", state);
     await this._saveState(state);
   }
 
