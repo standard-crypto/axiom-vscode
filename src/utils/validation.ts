@@ -19,6 +19,7 @@ export async function getProviderOrShowError(): Promise<string | undefined> {
     }
     return;
   }
+  return provider;
 }
 
 export type QueryWithAllValuesSet = SetRequired<

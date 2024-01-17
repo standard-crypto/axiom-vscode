@@ -26,22 +26,11 @@ export class Compile implements vscode.Disposable {
             return;
           }
 
-          // set default inputs
-          if (circuit.defaultInputs === undefined) {
-            for (const query of circuit.queries) {
-              if (query.inputPath !== undefined) {
-                circuit.defaultInputs = query.inputPath;
-              }
-            }
-          }
-
           // make sure default inputs are set
-          // TODO: this is a bit clunky, the user should be able to use
-          // an input that isn't part of a query, or they should be able
-          // to use typescript exports to define the default inputs
-          if (circuit.defaultInputs === undefined) {
+          const config = vscode.workspace.getConfiguration("axiom");
+          if (config.get('circuitInputsProvided') === 'As separate input files' && circuit.defaultInputs === undefined) {
             vscode.window.showErrorMessage(
-              "You must add a query and set an input file before compiling",
+              "You must set a default input file before compiling",
             );
             return;
           }
@@ -65,7 +54,7 @@ export class Compile implements vscode.Disposable {
                 function: circuit.source.functionName,
                 inputs:
                   circuit.defaultInputs?.fsPath ??
-                  "TODO ---------------------------",
+                  undefined,
                 output: circuit.buildPath.fsPath,
                 provider: provider,
               });

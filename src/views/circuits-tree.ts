@@ -20,6 +20,20 @@ class CircuitTreeItem extends vscode.TreeItem {
   }
 }
 
+class CircuitDefaultInputFileTreeItem extends vscode.TreeItem {
+  constructor(private circuit: Circuit, private inputPath?: vscode.Uri | undefined,) {
+    super("Default Input: ");
+    this.contextValue = "defaultInputFile";
+    if (circuit.defaultInputs === undefined) {
+      this.description = "[unset]";
+    } else {
+      this.description = vscode.workspace.asRelativePath(circuit.defaultInputs.path);
+    }
+    this.tooltip =
+      "A JSON file containing the default input values to use for this circuit";
+  }
+}
+
 class QueryHeaderItem extends vscode.TreeItem {
   constructor(
     private queries: Query[],
@@ -85,6 +99,7 @@ class RefundAddrTreeItem extends vscode.TreeItem {
 
 type TreeElem =
   | Circuit
+  | { inputPath: vscode.Uri | undefined, circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
   | { query: Query; type: "inputFile" | "callbackAddress" | "refundAddress" };
@@ -119,6 +134,8 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         element.queries as Query[],
         element.circuit as Circuit,
       );
+    } else if ("inputPath" in element && "circuit" in element){
+      return new CircuitDefaultInputFileTreeItem(element.circuit, element.inputPath);
     } else {
       return new QueryTreeItem(element.query, element.circuit);
     }
@@ -133,9 +150,16 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
       return state.circuits;
     }
 
-    // Parent is a Circuit -> return Queries
+    // Parent is a Circuit -> return Queries and Default Input (depending on config)
     else if (parent instanceof Circuit) {
-      return [{ queries: parent.queries, circuit: parent }];
+      const config = vscode.workspace.getConfiguration("axiom");
+      // return Default Input and Queries
+      if (config.get('circuitInputsProvided') === 'As separate input files') {
+        return [{inputPath: parent.defaultInputs, circuit: parent}, { queries: parent.queries, circuit: parent }];
+      // Default inputs are exported from circuit file -> return Queries
+      } else {
+        return [{ queries: parent.queries, circuit: parent }];
+      }
     }
 
     // Parent is a list of Queries -> return a single Query

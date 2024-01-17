@@ -21,8 +21,13 @@ export class AddQuery implements vscode.Disposable {
 
           const queryName = "query" + (circuit.queries.length + 1).toString();
 
+          const buildPathPrefix = circuit.buildPath.path.substring(
+            0,
+            circuit.buildPath.path.lastIndexOf("/"),
+          );
+
           const outputPath = vscode.Uri.joinPath(
-            circuit.buildPath,
+            vscode.Uri.parse(buildPathPrefix),
             circuit.name,
             queryName,
             "output.json",
