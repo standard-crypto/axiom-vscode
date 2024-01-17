@@ -8,6 +8,7 @@ import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
 import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
+  assertCircuitCanBeCompiled,
   assertQueryIsValid,
   getPrivateKeyOrShowError,
   getProviderOrShowError,
@@ -31,6 +32,11 @@ export class SendQuery implements vscode.Disposable {
         COMMAND_ID_SEND_QUERY,
         async ({ query }: { query: Query }) => {
           console.log("Send Query", query);
+
+          // make sure the Circuit can compile
+          if (!assertCircuitCanBeCompiled(query.circuit)) {
+            return;
+          }
 
           // make sure the Query has all its values set
           if (!assertQueryIsValid(query, false)) {

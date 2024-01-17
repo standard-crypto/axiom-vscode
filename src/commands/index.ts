@@ -29,7 +29,7 @@ export function registerCommands(
   circuitsTree: CircuitsTree,
   stateStore: StateStore,
 ) {
-  context.subscriptions.push(new Compile(context, stateStore));
+  context.subscriptions.push(new Compile(context));
   context.subscriptions.push(new Run(context));
   context.subscriptions.push(new SendQuery(context));
   context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));

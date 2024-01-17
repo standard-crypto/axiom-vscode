@@ -10,6 +10,7 @@ import { Circuit } from "../models/circuit";
 import { CONFIG_KEYS, CircuitInputsProvidedOpts } from "../config";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import { COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT } from "../commands";
 
 export async function getProviderOrShowError(): Promise<string | undefined> {
   const provider: string = vscode.workspace
@@ -139,7 +140,9 @@ export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
             "axiom",
           );
         } else if (choice === "Set default inputs") {
-          // TODO: invoke the command to open the file picker dialog
+          vscode.commands.executeCommand(COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT, {
+            circuit,
+          });        
         }
       });
     return false;
