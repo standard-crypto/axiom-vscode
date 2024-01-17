@@ -107,7 +107,7 @@ export async function rawCompile(provider: string, circuit: Circuit) {
   await compile(circuit.source.filePath.fsPath, {
     stats: false,
     function: circuit.source.functionName,
-    inputs: circuit.defaultInputs?.fsPath ?? undefined,
+    inputs: circuit.defaultInputs?.fsPath,
     output: circuit.buildPath.fsPath,
     provider: provider,
   });
