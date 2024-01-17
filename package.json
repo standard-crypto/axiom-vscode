@@ -15,19 +15,19 @@
   "contributes": {
     "configuration": [
       {
-				"id": "axiom",
-				"title": "Axiom",
-				"properties": {
-					"axiom.providerURI": {
-						"type": "string",
-						"description": "Provider URI",
-						"editPresentation": "singlelineText"
-					},
+        "id": "axiom",
+        "title": "Axiom",
+        "properties": {
+          "axiom.providerURI": {
+            "type": "string",
+            "description": "Provider URI",
+            "editPresentation": "singlelineText"
+          },
           "axiom.privateKey": {
-						"type": "string",
-						"description": "Private Key",
-						"editPresentation": "singlelineText"
-					},
+            "type": "string",
+            "description": "Private Key",
+            "editPresentation": "singlelineText"
+          },
           "axiom.circuitFilesPattern": {
             "type": "string",
             "description": "Glob pattern to used to automatically discover files containing circuit definitions",
@@ -45,81 +45,41 @@
             "type": "string",
             "default": "build/axiom",
             "description": "Path where circuit outputs from compiled circuits will be written"
-          },
-          "axiom.circuits": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "title": "circuit",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Circuit Name"
-                    },
-                    "circuitPath": {
-                        "type": "string",
-                        "description": "Circuit File Path"
-                    },
-                    "buildPath": {
-                      "type": "string",
-                      "description": "Circuit Build File Path"
-                    },
-                    "defaultInputPath": {
-                      "type": "string",
-                      "description": "Default Input File Path"
-                    },
-                    "queries": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "title": "query",
-                        "properties": {
-                          "inputPath": {
-                            "type": "string",
-                            "description": "Input File Path"
-                          },
-                          "outputPath": {
-                            "type": "string",
-                            "description": "Output File Path"
-                          },
-                          "callbackAddress": {
-                            "type": "string",
-                            "description": "Callback Address"
-                          },
-                          "refundAddress": {
-                            "type": "string",
-                            "description": "Refund Address"
-                          }
-                        }
-                      }
-                    },
-                    "default": [{
-                      "inputPath": "data/inputs/input.json",
-                      "outputPath": "data/output.json",
-                      "callbackAddress": "",
-                      "refundAddress": ""
-                    }],
-                    "description": "Queries Configuration"
-                }
-            },
-            "default": [{
-              "name": "nonceIncrementor",
-              "circuitPath": "axiom/circuit.ts",
-              "buildPath": "data/build.json",
-              "defaultInputPath": "data/inputs/defaultInput.json",
-              "queries": [{
-                "inputPath": "data/inputs/input.json",
-                "outputPath": "data/output.json",
-                "callbackAddress": "",
-                "refundAddress": ""
-              }]
-            }],
-            "description": "Circuits Configuration"
+          }
         }
-				}
-			}
+      }
     ],
     "commands": [
+      {
+        "command": "axiom-crypto.add-query",
+        "title": "Add Query",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "axiom-crypto.rename-query",
+        "title": "Rename Query",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.delete-query",
+        "title": "Delete Query",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "axiom-crypto.update-query-input",
+        "title": "Update Query Callback Address",
+        "icon": "$(file-add)"
+      },
+      {
+        "command": "axiom-crypto.update-query-callback",
+        "title": "Update Query Refund Address",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.update-query-refund",
+        "title": "Update Query Input",
+        "icon": "$(pencil)"
+      },
       {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
@@ -203,14 +163,44 @@
           "when": "view == axiom-circuits && viewItem == circuit"
         },
         {
-          "command": "axiom-crypto.run",
+          "command": "axiom-crypto.rename-query",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.send-query",
+          "command": "axiom-crypto.delete-query",
           "group": "inline@2",
           "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.run",
+          "group": "inline@3",
+          "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.send-query",
+          "group": "inline@4",
+          "when": "view == axiom-circuits && viewItem == query"
+        },
+        {
+          "command": "axiom-crypto.add-query",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == queryHeader"
+        },
+        {
+          "command": "axiom-crypto.update-query-input",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == inputFile"
+        },
+        {
+          "command": "axiom-crypto.update-query-callback",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == callbackAddress"
+        },
+        {
+          "command": "axiom-crypto.update-query-refund",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == refundAddress"
         }
       ]
     }
@@ -218,9 +208,11 @@
   "scripts": {
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
+    "recompile": "rm -Rf out && yarn compile",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
+    "format": "prettier src --write",
     "test": "vscode-test"
   },
   "devDependencies": {
@@ -232,11 +224,13 @@
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8",
     "eslint": "^8.54.0",
+    "prettier": "^3.1.1",
     "typescript": "^5.3.2"
   },
   "dependencies": {
     "@axiom-crypto/circuit": "^0.1.3",
     "@axiom-crypto/client": "^0.1.3",
+    "@metamask/etherscan-link": "^3.0.0",
     "ethers": "^6.9.0"
   }
 }

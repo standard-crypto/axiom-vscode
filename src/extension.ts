@@ -1,20 +1,20 @@
-import * as vscode from 'vscode';
-import { CircuitsTree } from './views/circuits-tree';
-import { registerCommands } from './commands';
-import { StateStore } from './state';
-import { registerCustomListeners } from './listeners';
+import * as vscode from "vscode";
+import { CircuitsTree } from "./views/circuits-tree";
+import { registerCommands } from "./commands";
+import { StateStore } from "./state";
+import { registerCustomListeners } from "./listeners";
 
 export async function activate(context: vscode.ExtensionContext) {
-	// create and populate local state store
-	const stateStore = new StateStore(context);
-	await stateStore.loadFromExtensionSettings();
+  // create and populate local state store
+  const stateStore = new StateStore(context);
+  await stateStore.reloadFromExtensionSettings();
 
-	// create the tree view
-	const circuitsTree = new CircuitsTree(stateStore);
+  // create the tree view
+  const circuitsTree = new CircuitsTree(stateStore);
 
-	registerCommands(context, circuitsTree);
+  registerCommands(context, circuitsTree, stateStore);
 
-	registerCustomListeners(context, stateStore, circuitsTree);
+  registerCustomListeners(context, stateStore, circuitsTree);
 }
 
 // This method is called when your extension is deactivated
