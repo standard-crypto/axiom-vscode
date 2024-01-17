@@ -82,6 +82,11 @@
         "icon": "$(pencil)"
       },
       {
+        "command": "axiom-crypto.update-query-callback-extra-data",
+        "title": "Update Query Callback Extra Data",
+        "icon": "$(pencil)"
+      },
+      {
         "command": "axiom-crypto.update-circuit-default-input",
         "title": "Update Circuit Default Input",
         "icon": "$(file-add)"
@@ -187,6 +192,11 @@
           "command": "axiom-crypto.update-query-refund",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == refundAddress"
+        },
+        {
+          "command": "axiom-crypto.update-query-callback-extra-data",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == extraData"
         }
       ]
     }

@@ -13,6 +13,8 @@ export const COMMAND_ID_UPDATE_QUERY_CALLBACK =
   "axiom-crypto.update-query-callback";
 export const COMMAND_ID_UPDATE_QUERY_REFUND =
   "axiom-crypto.update-query-refund";
+  export const COMMAND_ID_UPDATE_QUERY_CALLBACK_EXTRA_DATA =
+  "axiom-crypto.update-query-callback-extra-data";
 
 export class RenameQuery implements vscode.Disposable {
   constructor(
@@ -168,6 +170,39 @@ export class UpdateQueryRefund implements vscode.Disposable {
             query.refundAddress = ethers.getAddress(
               updatedRefund,
             ) as `0x${string}`;
+            await stateStore.updateState(query.circuit);
+            circuitsTree.refresh();
+          }
+        },
+      ),
+    );
+  }
+  dispose() {}
+}
+
+export class UpdateQueryCallbackExtraData implements vscode.Disposable {
+  constructor(
+    context: vscode.ExtensionContext,
+    circuitsTree: CircuitsTree,
+    stateStore: StateStore,
+  ) {
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        COMMAND_ID_UPDATE_QUERY_CALLBACK_EXTRA_DATA,
+        async ({ query }: { query: Query }) => {
+          console.log("Update Query Callback Extra Data", query);
+          const updatedCallbackExtraData = await vscode.window.showInputBox({
+            prompt: "Enter the callback extra data",
+            placeHolder: "0x",
+            validateInput: (input) => {
+              if (!ethers.isHexString(input)) {
+                return "Not a valid hex string";
+              }
+            },
+            ignoreFocusOut: true,
+          });
+          if (updatedCallbackExtraData !== undefined) {
+            query.callbackExtraData = updatedCallbackExtraData as `0x${string}`;
             await stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }

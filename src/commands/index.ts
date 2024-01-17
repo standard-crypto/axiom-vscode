@@ -10,6 +10,7 @@ import {
   UpdateQueryCallback,
   UpdateQueryInput,
   UpdateQueryRefund,
+  UpdateQueryCallbackExtraData
 } from "./update-query";
 import { ConfigureParameters } from "./configure";
 import { CircuitsTree } from "../views/circuits-tree";
@@ -49,6 +50,9 @@ export function registerCommands(
   );
   context.subscriptions.push(
     new UpdateQueryRefund(context, circuitsTree, stateStore),
+  );
+  context.subscriptions.push(
+    new UpdateQueryCallbackExtraData(context, circuitsTree, stateStore),
   );
   context.subscriptions.push(new ShowSource(context));
   context.subscriptions.push(new ConfigureParameters(context));

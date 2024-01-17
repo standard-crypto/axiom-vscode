@@ -112,12 +112,22 @@ class RefundAddrTreeItem extends vscode.TreeItem {
   }
 }
 
+class CallbackExtraDataTreeItem extends vscode.TreeItem {
+  constructor(extraData?: string) {
+    super("Callback Extra Data: ");
+    this.contextValue = "extraData";
+    this.description = extraData || "[unset]";
+    this.tooltip =
+      "Extra data for the query callback";
+  }
+}
+
 type TreeElem =
   | Circuit
   | { inputPath: vscode.Uri | undefined; circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
-  | { query: Query; type: "inputFile" | "callbackAddress" | "refundAddress" };
+  | { query: Query; type: "inputFile" | "callbackAddress" | "refundAddress"| "extraData" };
 
 class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -141,8 +151,10 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         return new InputFileTreeItem(element.query.inputPath);
       } else if (element.type === "callbackAddress") {
         return new CallbackAddrTreeItem(element.query.callbackAddress);
-      } else {
+      } else if (element.type === "refundAddress") {
         return new RefundAddrTreeItem(element.query.refundAddress);
+      } else {
+        return new CallbackExtraDataTreeItem(element.query.callbackExtraData);
       }
     } else if ("queries" in element && "circuit" in element) {
       return new QueryHeaderItem(
@@ -198,6 +210,7 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         { query: parent.query, type: "inputFile" },
         { query: parent.query, type: "callbackAddress" },
         { query: parent.query, type: "refundAddress" },
+        { query: parent.query, type: "extraData" },
       ];
     }
   }
