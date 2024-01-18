@@ -123,6 +123,7 @@ export class UpdateQueryCallback implements vscode.Disposable {
             prompt:
               "Enter the the target contract address with the callback function to be invoked by Axiom",
             placeHolder: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            value: query.callbackAddress,
             validateInput: (input) => {
               if (!ethers.isAddress(input)) {
                 return "Not a valid Ethereum address string";
@@ -157,6 +158,7 @@ export class UpdateQueryRefund implements vscode.Disposable {
         async ({ query }: { query: Query }) => {
           console.log("Update Query Refund", query);
           const updatedRefund = await vscode.window.showInputBox({
+            value: query.refundAddress,
             prompt: "Enter the address to refund excess payment to",
             placeHolder: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             validateInput: (input) => {
@@ -194,6 +196,7 @@ export class UpdateQueryCallbackExtraData implements vscode.Disposable {
           const updatedCallbackExtraData = await vscode.window.showInputBox({
             prompt: "Enter the callback extra data",
             placeHolder: "0x",
+            value: query.callbackExtraData,
             validateInput: (input) => {
               if (!ethers.isHexString(input)) {
                 return "Not a valid hex string";
