@@ -1,6 +1,6 @@
 export enum CONFIG_KEYS {
   ProviderURI = "providerURI",
-  PrivateKey = "privateKey",
+  PrivateKeyPath = "privateKeyPath",
   CircuitFilesPattern = "circuitFilesPattern",
   CircuitInputsProvided = "circuitInputsProvided",
   BuildDirectory = "buildDirectory",

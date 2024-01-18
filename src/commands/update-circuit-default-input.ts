@@ -3,7 +3,8 @@ import { CircuitsTree } from "../views/circuits-tree";
 import { Circuit } from "../models/circuit";
 import { StateStore } from "../state";
 
-export const COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT = "axiom-crypto.update-circuit-default-input";
+export const COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT =
+  "axiom-crypto.update-circuit-default-input";
 
 export class UpdateCircuitDefaultInput implements vscode.Disposable {
   constructor(
