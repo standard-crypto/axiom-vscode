@@ -4,6 +4,7 @@ import type { Query } from "../models/query";
 import {
   getProviderOrShowError,
   assertQueryIsValid,
+  assertCircuitCanBeCompiled,
 } from "../utils/validation";
 import { rawCompile } from "./compile";
 
@@ -21,6 +22,11 @@ export class Run implements vscode.Disposable {
         COMMAND_ID_RUN,
         async ({ query }: { query: Query }) => {
           console.log("Run", query);
+
+          // make sure the Circuit can compile
+          if (!assertCircuitCanBeCompiled(query.circuit)) {
+            return;
+          }
 
           // make sure the Query has all its values set
           if (!assertQueryIsValid(query)) {

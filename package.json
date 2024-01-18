@@ -67,18 +67,23 @@
       },
       {
         "command": "axiom-crypto.update-query-input",
-        "title": "Update Query Callback Address",
+        "title": "Select the JSON file containing this query's inputs",
         "icon": "$(file-add)"
       },
       {
         "command": "axiom-crypto.update-query-callback",
-        "title": "Update Query Refund Address",
+        "title": "Update Query Callback Address",
         "icon": "$(pencil)"
       },
       {
         "command": "axiom-crypto.update-query-refund",
-        "title": "Update Query Input",
+        "title": "Update Query Refund Address",
         "icon": "$(pencil)"
+      },
+      {
+        "command": "axiom-crypto.update-circuit-default-input",
+        "title": "Update Circuit Default Input",
+        "icon": "$(file-add)"
       },
       {
         "command": "axiom-crypto.compile",
@@ -97,6 +102,16 @@
       },
       {
         "command": "axiom-crypto.show-circuit-source",
+        "title": "View Source",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "axiom-crypto.show-default-input-source",
+        "title": "View Source",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "axiom-crypto.show-input-source",
         "title": "View Source",
         "icon": "$(go-to-file)"
       },
@@ -163,6 +178,16 @@
           "when": "view == axiom-circuits && viewItem == circuit"
         },
         {
+          "command": "axiom-crypto.show-default-input-source",
+          "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == defaultInputFile"
+        },
+        {
+          "command": "axiom-crypto.update-circuit-default-input",
+          "group": "inline@2",
+          "when": "view == axiom-circuits && viewItem == defaultInputFile"
+        },
+        {
           "command": "axiom-crypto.rename-query",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == query"
@@ -188,8 +213,13 @@
           "when": "view == axiom-circuits && viewItem == queryHeader"
         },
         {
-          "command": "axiom-crypto.update-query-input",
+          "command": "axiom-crypto.show-input-source",
           "group": "inline@1",
+          "when": "view == axiom-circuits && viewItem == inputFile"
+        },
+        {
+          "command": "axiom-crypto.update-query-input",
+          "group": "inline@2",
           "when": "view == axiom-circuits && viewItem == inputFile"
         },
         {
