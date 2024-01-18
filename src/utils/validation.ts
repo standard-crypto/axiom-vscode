@@ -10,6 +10,7 @@ import { Circuit } from "../models/circuit";
 import { CONFIG_KEYS, CircuitInputsProvidedOpts } from "../config";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import * as fs from 'fs';
 import { COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT } from "../commands";
 
 export async function getProviderOrShowError(): Promise<string | undefined> {
@@ -45,8 +46,9 @@ export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
     privateKeyPath ?? ".env",
   );
 
-  dotenv.config({ path: privateKeyFile });
-  const privateKey = process.env.PRIVATE_KEY;
+  const privateKeyFileContent = fs.readFileSync(privateKeyFile, 'utf-8');
+  const privateKeyFileParsed = dotenv.parse(privateKeyFileContent);
+  const privateKey = privateKeyFileParsed['PRIVATE_KEY'];
   return privateKey;
 }
 
