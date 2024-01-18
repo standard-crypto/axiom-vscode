@@ -34,7 +34,7 @@ export async function getProviderOrShowError(): Promise<string | undefined> {
 
 export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
   const config = vscode.workspace.getConfiguration("axiom");
-  const privateKeyPath: string | undefined = config.get("privateKeyPath");
+  const privateKeyPath: string | undefined = config.get(CONFIG_KEYS.PrivateKeyPath);
 
   if (vscode.workspace.workspaceFolders === undefined) {
     throw new Error("Expected at least one open VSCode workspace");
@@ -45,7 +45,7 @@ export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
     privateKeyPath ?? ".env",
   );
 
-  dotenv.config({ path: privateKeyFile ?? ".env" });
+  dotenv.config({ path: privateKeyFile });
   const privateKey = process.env.PRIVATE_KEY;
   return privateKey;
 }
