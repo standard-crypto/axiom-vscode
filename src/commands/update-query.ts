@@ -32,17 +32,12 @@ export class RenameQuery implements vscode.Disposable {
           });
           if (updatedName !== undefined) {
             query.name = updatedName;
-            const buildPathPrefix = query.circuit.buildPath.path.substring(
-              0,
-              query.circuit.buildPath.path.lastIndexOf("/"),
+
+            const buildFolder = path.dirname(query.circuit.buildPath.fsPath);
+            query.outputPath = vscode.Uri.parse(
+              path.join(buildFolder, query.name, "output.json"),
             );
-            const outputPath = path.join(
-              buildPathPrefix,
-              query.circuit.name,
-              updatedName,
-              "output.json",
-            );
-            query.outputPath = vscode.Uri.parse(outputPath);
+
             stateStore.updateState(query.circuit);
             circuitsTree.refresh();
           }
