@@ -18,14 +18,9 @@
         "id": "axiom",
         "title": "Axiom",
         "properties": {
-          "axiom.providerURI": {
+          "axiom.configFilePath": {
             "type": "string",
-            "description": "Provider URI",
-            "editPresentation": "singlelineText"
-          },
-          "axiom.privateKeyPath": {
-            "type": "string",
-            "description": "File in which PRIVATE_KEY is defined",
+            "description": "File in which PRIVATE_KEY_GOERLI and PROVIDER_URI_GOERLI are defined",
             "editPresentation": "singlelineText",
             "default": ".env"
           },
