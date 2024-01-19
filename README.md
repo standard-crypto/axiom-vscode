@@ -19,7 +19,7 @@ The output will be written to the directory set in the [extension settings](#ext
 
 ### Managing Queries
 
-Queries are managed by Axiom-VScode and saved to the VScode workspace state. 
+Queries are managed by Axiom-VScode and saved to the VS code workspace state. 
 
 #### Add a query
 <img src="media/add-query.gif" width="500" />
@@ -59,6 +59,6 @@ Note: You may need to run `yarn recompile` for changes to reflect.
 
 This extension contributes the following settings:
 
-* `axiom.configFilePath`: File in which PRIVATE_KEY_GOERLI and PROVIDER_URI_GOERLI are defined. Default is `.env`.
+* `axiom.configFilePath`: File in which `PRIVATE_KEY_GOERLI` and `PROVIDER_URI_GOERLI` are defined. Default is `.env`.
 * `axiom.circuitFilesPattern`: Glob pattern to used to automatically discover files containing circuit definitions. Default is `**/axiom/**/*.ts`.
 * `axiom.buildDirectory`: Path where circuit outputs from compiled circuits will be written. Default is `build/axiom`.
