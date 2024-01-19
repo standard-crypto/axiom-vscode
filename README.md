@@ -14,7 +14,7 @@ Circuits are loaded from a specified location using a customizable glob pattern 
 
 Compilation requires that the default input be set. 
 
-The output will be written to the directory set in the [extension settings](#extension-settings)
+The output will be written to the directory set in the [extension settings](#extension-settings).
 <img src="media/compile-circuit.gif" width="500" />
 
 ### Managing Queries
