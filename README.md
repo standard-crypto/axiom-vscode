@@ -1,6 +1,6 @@
 # Axiom-VScode
 
-A VS code extension for testing, running and sending [Axiom](https://www.axiom.xyz/) circuits and queries.
+A VS code extension designed for [Axiom](https://www.axiom.xyz/). You can use this extension to compile a circuit and run & send queries.
 
 ## Features
 
