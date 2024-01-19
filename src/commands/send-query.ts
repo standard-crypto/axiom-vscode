@@ -10,10 +10,10 @@ import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
-  getPrivateKeyOrShowError,
-  getProviderOrShowError,
+  getConfigValueOrShowError,
 } from "../utils/validation";
 import { rawCompile } from "./compile";
+import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -44,13 +44,17 @@ export class SendQuery implements vscode.Disposable {
           }
 
           // make sure provider is set
-          const provider = await getProviderOrShowError();
+          const provider = await getConfigValueOrShowError(
+            CONFIG_KEYS.ProviderUriGoerli,
+          );
           if (provider === undefined) {
             return;
           }
 
           // make sure private key is set
-          const privateKey = await getPrivateKeyOrShowError();
+          const privateKey = await getConfigValueOrShowError(
+            CONFIG_KEYS.PrivateKeyGoerli,
+          );
           if (privateKey === undefined) {
             return;
           }
@@ -95,6 +99,10 @@ export class SendQuery implements vscode.Disposable {
               });
               const outputJson = readJsonFromFile(query.outputPath.fsPath);
 
+              const rpcProvider = new JsonRpcProvider(provider, chainId);
+              const signer = new Wallet(privateKey, rpcProvider);
+              const sender = await signer.getAddress();
+
               const sendQuery = await buildSendQuery({
                 axiom,
                 dataQuery: outputJson.dataQuery,
@@ -104,15 +112,12 @@ export class SendQuery implements vscode.Disposable {
                   extraData: query.callbackExtraData ?? "0x",
                 },
                 options: {
-                  refundee: query.refundAddress,
+                  refundee: query.refundAddress ?? sender,
                   //   maxFeePerGas: options.maxFeePerGas,
                   //   callbackGasLimit: options.callbackGasLimit,
                 },
-                caller: query.refundAddress,
+                caller: sender,
               });
-
-              const rpcProvider = new JsonRpcProvider(provider, chainId);
-              const signer = new Wallet(privateKey, rpcProvider);
 
               const tx = new Transaction();
               tx.chainId = chainId;
@@ -139,7 +144,9 @@ export class SendQuery implements vscode.Disposable {
                     `Callback Address: ${abbreviateAddr(
                       query.callbackAddress,
                     )}`,
-                    `Refund Address: ${abbreviateAddr(query.refundAddress)}`,
+                    `Refund Address: ${abbreviateAddr(
+                      query.refundAddress ?? sender,
+                    )}`,
                     "",
                     `Tx From: ${abbreviateAddr(populatedTx.from!)}`,
                     `Tx Value: ${ethers.formatEther(populatedTx.value!)} ETH`,

@@ -2,14 +2,15 @@ import * as vscode from "vscode";
 import { compile } from "@axiom-crypto/circuit";
 import { Circuit } from "../models/circuit";
 import { CONFIG_KEYS } from "../config";
-import { assertCircuitCanBeCompiled } from "../utils/validation";
+import {
+  assertCircuitCanBeCompiled,
+  getConfigValueOrShowError,
+} from "../utils/validation";
 
 export const COMMAND_ID_COMPILE = "axiom-crypto.compile";
 
 export class Compile implements vscode.Disposable {
-  constructor(
-    private context: vscode.ExtensionContext
-  ) {
+  constructor(private context: vscode.ExtensionContext) {
     this.context.subscriptions.push(
       vscode.commands.registerCommand(
         COMMAND_ID_COMPILE,
@@ -17,24 +18,10 @@ export class Compile implements vscode.Disposable {
           console.log("Compile", circuit);
 
           // make sure provider is set
-          const provider: string =
-            vscode.workspace
-              .getConfiguration()
-              .get(`axiom.${CONFIG_KEYS.ProviderURI}`) ?? "";
-          if (provider.length === 0) {
-            vscode.window
-              .showErrorMessage(
-                "You must set a provider URI before compiling",
-                "Open Axiom settings",
-              )
-              .then((choice) => {
-                if (choice === "Open Axiom settings") {
-                  vscode.commands.executeCommand(
-                    "workbench.action.openWorkspaceSettings",
-                    "axiom",
-                  );
-                }
-              });
+          const provider = await getConfigValueOrShowError(
+            CONFIG_KEYS.ProviderUriGoerli,
+          );
+          if (provider === undefined) {
             return;
           }
 
