@@ -34,7 +34,7 @@ You must also set `PROVIDER_URI_GOERLI` in the config file defined in the [exten
 
 #### Sending queries
 
-You must run the query and set the refund address before sending.
+You must set the refund address before sending.
 
 You must also set `PRIVATE_KEY_GOERLI` in the config file defined in the [extension settings](#extension-settings).
 
