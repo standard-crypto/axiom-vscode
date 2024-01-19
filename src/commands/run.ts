@@ -2,11 +2,12 @@ import * as vscode from "vscode";
 import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
 import {
-  getProviderOrShowError,
+  getConfigValueOrShowError,
   assertQueryIsValid,
   assertCircuitCanBeCompiled,
 } from "../utils/validation";
 import { rawCompile } from "./compile";
+import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";
 
@@ -34,7 +35,9 @@ export class Run implements vscode.Disposable {
           }
 
           // make sure provider is set
-          const provider = await getProviderOrShowError();
+          const provider = await getConfigValueOrShowError(
+            CONFIG_KEYS.ProviderUriGoerli,
+          );
           if (provider === undefined) {
             return;
           }

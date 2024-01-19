@@ -10,7 +10,7 @@ import {
   UpdateQueryCallback,
   UpdateQueryInput,
   UpdateQueryRefund,
-  UpdateQueryCallbackExtraData
+  UpdateQueryCallbackExtraData,
 } from "./update-query";
 import { ConfigureParameters } from "./configure";
 import { CircuitsTree } from "../views/circuits-tree";

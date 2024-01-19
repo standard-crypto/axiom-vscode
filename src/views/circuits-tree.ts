@@ -117,8 +117,7 @@ class CallbackExtraDataTreeItem extends vscode.TreeItem {
     super("Callback Extra Data: ");
     this.contextValue = "extraData";
     this.description = extraData || "[unset]";
-    this.tooltip =
-      "Extra data for the query callback";
+    this.tooltip = "Extra data for the query callback";
   }
 }
 
@@ -127,7 +126,10 @@ type TreeElem =
   | { inputPath: vscode.Uri | undefined; circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
-  | { query: Query; type: "inputFile" | "callbackAddress" | "refundAddress"| "extraData" };
+  | {
+      query: Query;
+      type: "inputFile" | "callbackAddress" | "refundAddress" | "extraData";
+    };
 
 class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
   private _onDidChangeTreeData: vscode.EventEmitter<

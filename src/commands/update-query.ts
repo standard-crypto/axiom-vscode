@@ -13,7 +13,7 @@ export const COMMAND_ID_UPDATE_QUERY_CALLBACK =
   "axiom-crypto.update-query-callback";
 export const COMMAND_ID_UPDATE_QUERY_REFUND =
   "axiom-crypto.update-query-refund";
-  export const COMMAND_ID_UPDATE_QUERY_CALLBACK_EXTRA_DATA =
+export const COMMAND_ID_UPDATE_QUERY_CALLBACK_EXTRA_DATA =
   "axiom-crypto.update-query-callback-extra-data";
 
 export class RenameQuery implements vscode.Disposable {
