@@ -46,13 +46,29 @@ export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
     privateKeyPath ?? ".env",
   );
 
+  if (!fs.existsSync(privateKeyFile)) {
+    vscode.window.showErrorMessage(
+      `File ${privateKeyPath} not found in current workspace. Did you forget to create it?`,
+      "Open Axiom settings",
+    ).then(async (choice) => {
+      if (choice === "Open Axiom settings") {
+        vscode.commands.executeCommand(
+          "workbench.action.openWorkspaceSettings",
+          "axiom",
+        );
+      }
+    });
+    return undefined;
+  }
+
   const privateKeyFileContent = fs.readFileSync(privateKeyFile, 'utf-8');
   const privateKeyFileParsed = dotenv.parse(privateKeyFileContent);
-  const privateKey = privateKeyFileParsed['PRIVATE_KEY'];
+  const key = 'PRIVATE_KEY_GOERLI';
+  const privateKey = privateKeyFileParsed[key];
 
   if (privateKey === undefined || privateKey === '') {
     vscode.window.showErrorMessage(
-      `No value found for key PRIVATE_KEY in ${privateKeyPath}`,
+      `No value found for key ${key} in ${privateKeyPath}`,
       "Open Axiom settings",
       `Open ${privateKeyPath}`
     ).then(async (choice) => {
