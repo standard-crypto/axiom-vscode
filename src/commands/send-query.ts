@@ -102,7 +102,6 @@ export class SendQuery implements vscode.Disposable {
               const rpcProvider = new JsonRpcProvider(provider, chainId);
               const signer = new Wallet(privateKey, rpcProvider);
               const sender = await signer.getAddress();
-              console.log(`signer: ${sender}`);
 
               const sendQuery = await buildSendQuery({
                 axiom,
