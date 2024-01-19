@@ -8,10 +8,7 @@ Axiom-VScode offers a user-friendly view for managing your Axiom circuit and its
 
 ### Managing Circuits
 
-Circuits are loaded from a specified location using a customizable glob pattern in the [extension settings](#extension-settings)
-. The circuit name is extracted from the circuit file.
-
-<img src="media/circuits-tree.png" width="500" />
+Circuits are loaded from a specified location using a customizable glob pattern in the [extension settings](#extension-settings). The circuit name is extracted from the circuit file.
 
 #### Compile a Circuit
 
@@ -27,19 +24,19 @@ Queries are managed by Axiom-VScode and saved to the VScode workspace state.
 #### Add a query
 <img src="media/add-query.gif" width="500" />
 
-#### Run a query
+#### Running queries
 
 You must compile the circuit and set the query input before running.
 
-You must also set `PROVIDER_URI_GOERLI` in the config file defined in the [extension settings](#extension-settings)
+You must also set `PROVIDER_URI_GOERLI` in the config file defined in the [extension settings](#extension-settings).
 
 <img src="media/run-query.gif" width="500" />
 
-#### Sending a query
+#### Sending queries
 
 You must run the query and set the refund address before sending.
 
-You must also set `PRIVATE_KEY_GOERLI` in the config file defined in the [extension settings](#extension-settings)
+You must also set `PRIVATE_KEY_GOERLI` in the config file defined in the [extension settings](#extension-settings).
 
 <img src="media/send-query.gif" width="500" />
 
