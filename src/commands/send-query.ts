@@ -116,7 +116,7 @@ export class SendQuery implements vscode.Disposable {
                   //   maxFeePerGas: options.maxFeePerGas,
                   //   callbackGasLimit: options.callbackGasLimit,
                 },
-                caller: query.refundAddress ?? sender,
+                caller: sender,
               });
 
               const tx = new Transaction();
