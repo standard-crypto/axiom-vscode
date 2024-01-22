@@ -6,7 +6,7 @@ import {
   COMMAND_ID_UPDATE_QUERY_INPUT,
 } from "../commands/update-query";
 import { Circuit } from "../models/circuit";
-import { CONFIG_KEYS, CircuitInputsProvidedOpts } from "../config";
+import { CONFIG_KEYS } from "../config";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
@@ -123,29 +123,14 @@ export function assertQueryIsValid(
 }
 
 export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
-  const config = vscode.workspace.getConfiguration("axiom");
-  const circuitInputsProvided = config.get<CircuitInputsProvidedOpts>(
-    CONFIG_KEYS.CircuitInputsProvided,
-    "As separate input files",
-  );
-
-  if (
-    circuitInputsProvided === "As separate input files" &&
-    circuit.defaultInputs === undefined
-  ) {
+  if (circuit.defaultInputs === undefined) {
     vscode.window
       .showErrorMessage(
         "No default inputs found for this circuit",
         "Set default inputs",
-        "Open Axiom settings",
       )
       .then((choice) => {
-        if (choice === "Open Axiom settings") {
-          vscode.commands.executeCommand(
-            "workbench.action.openWorkspaceSettings",
-            "axiom",
-          );
-        } else if (choice === "Set default inputs") {
+        if (choice === "Set default inputs") {
           vscode.commands.executeCommand(
             COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
             {
