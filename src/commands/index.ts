@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Compile } from "./compile";
+import { Compile, TriggerCompile } from "./compile";
 import { Run } from "./run";
 import { SendQuery } from "./send-query";
 import { AddQuery } from "./add-query";
@@ -30,6 +30,7 @@ export function registerCommands(
   stateStore: StateStore,
 ) {
   context.subscriptions.push(new Compile(context));
+  context.subscriptions.push(new TriggerCompile(context));
   context.subscriptions.push(new Run(context));
   context.subscriptions.push(new SendQuery(context));
   context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));
