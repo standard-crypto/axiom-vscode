@@ -10,7 +10,10 @@ import { CONFIG_KEYS, CircuitInputsProvidedOpts } from "../config";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
-import { COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT } from "../commands";
+import {
+  COMMAND_ID_TRIGGER_COMPILE,
+  COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
+} from "../commands";
 
 export async function getConfigValueOrShowError(
   keyName: string,
@@ -66,6 +69,22 @@ export function assertQueryIsValid(
   query: Query,
   allowUnsetCallbackAddr = true,
 ): query is QueryWithRequiredValuesSet {
+  // validate that circuit has been compiled
+  if (!fs.existsSync(query.circuit.buildPath.fsPath)) {
+    vscode.window
+      .showErrorMessage(
+        "You must compile the circuit before running a query",
+        "Compile circuit",
+      )
+      .then((choice) => {
+        if (choice === "Compile circuit") {
+          vscode.commands.executeCommand(COMMAND_ID_TRIGGER_COMPILE, {
+            query,
+          });
+        }
+      });
+    return false;
+  }
   // validate query input path
   if (query.inputPath === undefined) {
     vscode.window
