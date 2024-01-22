@@ -1,19 +1,18 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
-import { createExplorerLink } from "@metamask/etherscan-link";
 import { buildSendQuery } from "@axiom-crypto/client";
 import { Axiom } from "@axiom-crypto/core";
 import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
-import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
+import { JsonRpcProvider, Transaction, Wallet, ethers, toBigInt } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
-  getConfigValueOrShowError,
+  getProviderOrShowError,
+  getPrivateKeyOrShowError
 } from "../utils/validation";
-import { rawCompile } from "./compile";
-import { CONFIG_KEYS } from "../config";
+import { axiomExplorerUrl } from "../config";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -44,17 +43,13 @@ export class SendQuery implements vscode.Disposable {
           }
 
           // make sure provider is set
-          const provider = await getConfigValueOrShowError(
-            CONFIG_KEYS.ProviderUriGoerli,
-          );
+          const provider = await getProviderOrShowError();
           if (provider === undefined) {
             return;
           }
 
           // make sure private key is set
-          const privateKey = await getConfigValueOrShowError(
-            CONFIG_KEYS.PrivateKeyGoerli,
-          );
+          const privateKey = await getPrivateKeyOrShowError();
           if (privateKey === undefined) {
             return;
           }
@@ -74,15 +69,8 @@ export class SendQuery implements vscode.Disposable {
               cancellable: false,
             },
             async (progress) => {
-              // compile the circuit
-              progress.report({
-                increment: 0,
-                message: "Compiling circuit...",
-              });
-              await rawCompile(provider, query.circuit);
-
               // run the query
-              progress.report({ increment: 25, message: "Running query..." });
+              progress.report({ increment: 0, message: "Running query..." });
               await run(query.circuit.source.filePath.fsPath, {
                 stats: false,
                 function: query.circuit.source.functionName,
@@ -94,7 +82,7 @@ export class SendQuery implements vscode.Disposable {
 
               // submit the query
               progress.report({
-                increment: 25,
+                increment: 33,
                 message: "Building and signing Ethereum transaction...",
               });
               const outputJson = readJsonFromFile(query.outputPath.fsPath);
@@ -172,8 +160,15 @@ export class SendQuery implements vscode.Disposable {
                 await signer.sendTransaction(populatedTx);
 
               // wait for tx confirmation
-              progress.report({ increment: 25, message: "Broadcasting..." });
-              await transactionResponse.wait();
+              progress.report({ increment: 33, message: "Broadcasting..." });
+              const transactionReceipt = await transactionResponse.wait();
+
+              // get query id
+              let queryId: BigInt;
+              if (transactionReceipt?.logs && transactionReceipt.logs[1].topics[1]) {
+                const queryIdHex = transactionReceipt.logs[1].topics[1];
+                queryId = toBigInt(queryIdHex);
+              }
 
               // done
               progress.report({
@@ -184,16 +179,13 @@ export class SendQuery implements vscode.Disposable {
               vscode.window
                 .showInformationMessage(
                   `Query submitted successfully`,
-                  "View Transaction on Explorer",
+                  "View Transaction on Axiom Explorer",
                 )
                 .then(async (choice) => {
-                  if (choice === "View Transaction on Explorer") {
+                  if (choice === "View Transaction on Axiom Explorer") {
                     vscode.env.openExternal(
                       vscode.Uri.parse(
-                        createExplorerLink(
-                          transactionResponse.hash,
-                          `${chainId}`,
-                        ),
+                        axiomExplorerUrl + '/goerli/query/' + queryId.toString() // TODO: replace with network config
                       ),
                     );
                   }

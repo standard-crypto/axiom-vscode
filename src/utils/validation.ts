@@ -6,7 +6,7 @@ import {
   COMMAND_ID_UPDATE_QUERY_INPUT,
 } from "../commands/update-query";
 import { Circuit } from "../models/circuit";
-import { CONFIG_KEYS } from "../config";
+import { CONFIG_KEYS, NetworkOpts } from "../config";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
@@ -15,7 +15,7 @@ import {
   COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
 } from "../commands";
 
-export async function getConfigValueOrShowError(
+async function getConfigValueOrShowError(
   keyName: string,
 ): Promise<string | undefined> {
   const config = vscode.workspace.getConfiguration("axiom");
@@ -58,6 +58,32 @@ export async function getConfigValueOrShowError(
   }
 
   return value;
+}
+
+export async function getProviderOrShowError(): Promise<string | undefined> {
+  const config = vscode.workspace.getConfiguration("axiom");
+  const network: NetworkOpts | undefined = config.get(CONFIG_KEYS.Network);
+  if (network === "Goerli") {
+    return getConfigValueOrShowError(CONFIG_KEYS.ProviderUriGoerli);
+  } else if (network === "Sepolia") {
+    return getConfigValueOrShowError(CONFIG_KEYS.ProviderUriSepolia);
+  } else {
+    return getConfigValueOrShowError(CONFIG_KEYS.ProviderUriMainnet);
+
+  }
+}
+
+export async function getPrivateKeyOrShowError(): Promise<string | undefined> {
+  const config = vscode.workspace.getConfiguration("axiom");
+  const network: NetworkOpts | undefined = config.get(CONFIG_KEYS.Network);
+  if (network === "Goerli") {
+    return getConfigValueOrShowError(CONFIG_KEYS.PrivateKeyGoerli);
+  } else if (network === "Sepolia") {
+    return getConfigValueOrShowError(CONFIG_KEYS.PrivateKeySepolia);
+  } else {
+    return getConfigValueOrShowError(CONFIG_KEYS.PrivateKeyMainnet);
+
+  }
 }
 
 export type QueryWithRequiredValuesSet = SetRequired<

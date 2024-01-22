@@ -33,6 +33,15 @@
             "type": "string",
             "default": "build/axiom",
             "description": "Path where circuit outputs from compiled circuits will be written"
+          },
+          "axiom.network": {
+            "type": "string",
+            "enum": [
+              "Goerli",
+              "Sepolia",
+              "Mainnet"
+            ],
+            "default": "Goerli"
           }
         }
       }
