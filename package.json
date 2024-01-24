@@ -20,7 +20,7 @@
         "properties": {
           "axiom.configFilePath": {
             "type": "string",
-            "description": "File in which PRIVATE_KEY_GOERLI and PROVIDER_URI_GOERLI are defined",
+            "description": "File in which PRIVATE_KEY_SEPOLIA and PROVIDER_URI_SEPOLIA are defined",
             "editPresentation": "singlelineText",
             "default": ".env"
           },
@@ -33,15 +33,6 @@
             "type": "string",
             "default": "build/axiom",
             "description": "Path where circuit outputs from compiled circuits will be written"
-          },
-          "axiom.network": {
-            "type": "string",
-            "enum": [
-              "Goerli",
-              "Sepolia",
-              "Mainnet"
-            ],
-            "default": "Goerli"
           }
         }
       }

@@ -3,9 +3,10 @@ import { compile } from "@axiom-crypto/circuit";
 import { Circuit } from "../models/circuit";
 import {
   assertCircuitCanBeCompiled,
-  getProviderOrShowError,
+  getConfigValueOrShowError,
 } from "../utils/validation";
 import { Query } from "../models/query";
+import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_COMPILE = "axiom-crypto.compile";
 export const COMMAND_ID_TRIGGER_COMPILE = "axiom-crypto.trigger-compile";
@@ -42,7 +43,9 @@ export async function compileCircuit(circuit: Circuit) {
   console.log("Compile", circuit);
 
   // make sure provider is set
-  const provider = await getProviderOrShowError();
+  const provider = await getConfigValueOrShowError(
+    CONFIG_KEYS.ProviderUriSepolia,
+  );
   if (provider === undefined) {
     return;
   }

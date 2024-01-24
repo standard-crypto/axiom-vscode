@@ -9,10 +9,10 @@ import { JsonRpcProvider, Transaction, Wallet, ethers, toBigInt } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
-  getProviderOrShowError,
-  getPrivateKeyOrShowError
+  getConfigValueOrShowError,
+  getQueryIdOrShowError,
 } from "../utils/validation";
-import { axiomExplorerUrl } from "../config";
+import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -43,18 +43,22 @@ export class SendQuery implements vscode.Disposable {
           }
 
           // make sure provider is set
-          const provider = await getProviderOrShowError();
+          const provider = await getConfigValueOrShowError(
+            CONFIG_KEYS.ProviderUriSepolia,
+          );
           if (provider === undefined) {
             return;
           }
 
           // make sure private key is set
-          const privateKey = await getPrivateKeyOrShowError();
+          const privateKey = await getConfigValueOrShowError(
+            CONFIG_KEYS.PrivateKeySepolia,
+          );
           if (privateKey === undefined) {
             return;
           }
 
-          const chainId = 5; // TODO: receive from config
+          const chainId = 5; // TODO: replace with sepolia 11155111
 
           const axiom = new Axiom({
             providerUri: provider,
@@ -163,11 +167,29 @@ export class SendQuery implements vscode.Disposable {
               progress.report({ increment: 33, message: "Broadcasting..." });
               const transactionReceipt = await transactionResponse.wait();
 
+              if (transactionReceipt === null) {
+                progress.report({
+                  increment: 100,
+                  message: `Error submitting transaction`,
+                });
+                vscode.window.showErrorMessage(
+                  `Error broadcasting transaction`,
+                );
+                return;
+              }
+
               // get query id
-              let queryId: BigInt;
-              if (transactionReceipt?.logs && transactionReceipt.logs[1].topics[1]) {
-                const queryIdHex = transactionReceipt.logs[1].topics[1];
-                queryId = toBigInt(queryIdHex);
+              const queryId = getQueryIdOrShowError(
+                transactionReceipt,
+                chainId,
+              );
+
+              if (queryId === undefined) {
+                progress.report({
+                  increment: 100,
+                  message: `Error`,
+                });
+                return;
               }
 
               // done
@@ -184,9 +206,7 @@ export class SendQuery implements vscode.Disposable {
                 .then(async (choice) => {
                   if (choice === "View Transaction on Axiom Explorer") {
                     vscode.env.openExternal(
-                      vscode.Uri.parse(
-                        axiomExplorerUrl + '/goerli/query/' + queryId.toString() // TODO: replace with network config
-                      ),
+                      vscode.Uri.parse(axiomExplorerUrl + queryId),
                     );
                   }
                 });
