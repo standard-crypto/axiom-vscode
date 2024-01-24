@@ -5,7 +5,7 @@ import { buildSendQuery } from "@axiom-crypto/client";
 import { Axiom } from "@axiom-crypto/core";
 import { run } from "@axiom-crypto/circuit";
 import type { Query } from "../models/query";
-import { JsonRpcProvider, Transaction, Wallet, ethers, toBigInt } from "ethers";
+import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
