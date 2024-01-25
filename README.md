@@ -28,7 +28,7 @@ Queries are managed by Axiom-VScode and saved to the VS code workspace state.
 
 You must compile the circuit and set the query input before running.
 
-You must also set `PROVIDER_URI_GOERLI` in the config file defined in the [extension settings](#extension-settings).
+You must also set `PROVIDER_URI_SEPOLIA` in the config file defined in the [extension settings](#extension-settings).
 
 <img src="media/run-query.gif" width="500" />
 
@@ -36,7 +36,7 @@ You must also set `PROVIDER_URI_GOERLI` in the config file defined in the [exten
 
 You must set the refund address before sending.
 
-You must also set `PRIVATE_KEY_GOERLI` in the config file defined in the [extension settings](#extension-settings).
+You must also set `PRIVATE_KEY_SEPOLIA` in the config file defined in the [extension settings](#extension-settings).
 
 <img src="media/send-query.gif" width="500" />
 
@@ -59,6 +59,6 @@ Note: You may need to run `yarn recompile` for changes to reflect.
 
 This extension contributes the following settings:
 
-* `axiom.configFilePath`: File in which `PRIVATE_KEY_GOERLI` and `PROVIDER_URI_GOERLI` are defined. Default is `.env`.
+* `axiom.configFilePath`: File in which `PRIVATE_KEY_SEPOLIA` and `PROVIDER_URI_SEPOLIA` are defined. Default is `.env`.
 * `axiom.circuitFilesPattern`: Glob pattern to used to automatically discover files containing circuit definitions. Default is `**/axiom/**/*.ts`.
 * `axiom.buildDirectory`: Path where circuit outputs from compiled circuits will be written. Default is `build/axiom`.
