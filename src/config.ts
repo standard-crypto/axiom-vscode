@@ -2,6 +2,8 @@ export enum CONFIG_KEYS {
   ConfigFilePath = "configFilePath",
   CircuitFilesPattern = "circuitFilesPattern",
   BuildDirectory = "buildDirectory",
-  ProviderUriGoerli = "PROVIDER_URI_GOERLI",
-  PrivateKeyGoerli = "PRIVATE_KEY_GOERLI",
+  ProviderUriSepolia = "PROVIDER_URI_SEPOLIA",
+  PrivateKeySepolia = "PRIVATE_KEY_SEPOLIA",
 }
+
+export const axiomExplorerUrl = "https://explorer.axiom.xyz/v2/sepolia/query/";

@@ -20,7 +20,7 @@
         "properties": {
           "axiom.configFilePath": {
             "type": "string",
-            "description": "File in which PRIVATE_KEY_GOERLI and PROVIDER_URI_GOERLI are defined",
+            "description": "File in which PRIVATE_KEY_SEPOLIA and PROVIDER_URI_SEPOLIA are defined",
             "editPresentation": "singlelineText",
             "default": ".env"
           },

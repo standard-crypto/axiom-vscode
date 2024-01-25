@@ -14,6 +14,8 @@ import {
   COMMAND_ID_TRIGGER_COMPILE,
   COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
 } from "../commands";
+import { TransactionReceipt, toBigInt } from "ethers";
+import { createExplorerLink } from "@metamask/etherscan-link";
 
 export async function getConfigValueOrShowError(
   keyName: string,
@@ -58,6 +60,32 @@ export async function getConfigValueOrShowError(
   }
 
   return value;
+}
+
+export function getQueryIdOrShowError(
+  transactionReceipt: TransactionReceipt,
+  chainId: number,
+): string | undefined {
+  if (transactionReceipt?.logs && transactionReceipt.logs[1].topics[1]) {
+    const queryIdHex = transactionReceipt.logs[1].topics[1];
+    const queryId = toBigInt(queryIdHex);
+    return queryId.toString();
+  }
+  vscode.window
+    .showErrorMessage(
+      `No queryId found for transaction ${transactionReceipt?.hash}`,
+      "View Transaction on Etherscan",
+    )
+    .then(async (choice) => {
+      if (choice === "View Transaction on Etherscan") {
+        vscode.env.openExternal(
+          vscode.Uri.parse(
+            createExplorerLink(transactionReceipt.hash, `${chainId}`),
+          ),
+        );
+      }
+    });
+  return undefined;
 }
 
 export type QueryWithRequiredValuesSet = SetRequired<

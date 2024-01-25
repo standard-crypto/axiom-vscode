@@ -29,7 +29,7 @@ export class Run implements vscode.Disposable {
 
           // make sure provider is set
           const provider = await getConfigValueOrShowError(
-            CONFIG_KEYS.ProviderUriGoerli,
+            CONFIG_KEYS.ProviderUriSepolia,
           );
           if (provider === undefined) {
             return;

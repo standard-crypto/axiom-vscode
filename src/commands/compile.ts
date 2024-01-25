@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 import { compile } from "@axiom-crypto/circuit";
 import { Circuit } from "../models/circuit";
-import { CONFIG_KEYS } from "../config";
 import {
   assertCircuitCanBeCompiled,
   getConfigValueOrShowError,
 } from "../utils/validation";
 import { Query } from "../models/query";
+import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_COMPILE = "axiom-crypto.compile";
 export const COMMAND_ID_TRIGGER_COMPILE = "axiom-crypto.trigger-compile";
@@ -44,7 +44,7 @@ export async function compileCircuit(circuit: Circuit) {
 
   // make sure provider is set
   const provider = await getConfigValueOrShowError(
-    CONFIG_KEYS.ProviderUriGoerli,
+    CONFIG_KEYS.ProviderUriSepolia,
   );
   if (provider === undefined) {
     return;
