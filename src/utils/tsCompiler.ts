@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import ts from "typescript";
+import * as fs from "fs";
+import * as path from "path";
+import * as vm from "vm";
+import { execSync } from "child_process";
 
 export function extractCircuitName(
   circuitFileUri: vscode.Uri,
@@ -44,4 +48,51 @@ export function extractCircuitName(
       }
     }
   }
+}
+
+export async function getFunctionFromTs(
+  relativePath: string,
+  functionName: string,
+) {
+  const code = fs.readFileSync(path.resolve(relativePath), "utf8");
+  const result = ts.transpileModule(code, {
+    compilerOptions: {
+      preserveConstEnums: true,
+      keepFunctionNames: true,
+      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.CommonJS,
+    },
+  });
+  const script = new vm.Script(result.outputText);
+  const customRequire = (moduleName: string) => {
+    try {
+      if (moduleName === "@axiom-crypto/halo2-lib-js") {
+        return require("@axiom-crypto/halo2-lib-js");
+      } else if (moduleName === "@axiom-crypto/client") {
+        return require("@axiom-crypto/client");
+      } else {
+        const npmRoot = execSync("npm root").toString().trim();
+        return require(`${npmRoot}/${moduleName}`);
+      }
+    } catch (e) {
+      throw new Error(
+        `Cannot find module '${moduleName}'.\n Try installing it globally with 'npm install -g ${moduleName}'`,
+      );
+    }
+  };
+  const context = vm.createContext({
+    exports: {},
+    require: customRequire,
+    module: module,
+    console: console,
+    __filename: __filename,
+    __dirname: __dirname,
+  });
+  script.runInContext(context);
+  if (!context.exports[functionName]) {
+    throw new Error(
+      `File does not export a function called \`${functionName}\`!`,
+    );
+  }
+  return context.exports[functionName];
 }

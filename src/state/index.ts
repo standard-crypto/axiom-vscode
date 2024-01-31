@@ -10,6 +10,7 @@ interface SerializedState {
     functionName: string;
     buildPath: string;
     defaultInputs?: string;
+    inputSchema?: string;
     queries: Array<SerializedQuery>;
   }>;
 }
@@ -69,6 +70,7 @@ export class StateStore {
         filePath: circuit.source.filePath.toString(),
         functionName: circuit.source.functionName,
         defaultInputs: circuit.defaultInputs?.toString(),
+        inputSchema: circuit.inputSchema?.toString(),
         queries: serializedQueries,
       });
     }
@@ -93,6 +95,9 @@ export class StateStore {
         circuit.defaultInputs === undefined
           ? undefined
           : vscode.Uri.parse(circuit.defaultInputs),
+        circuit.inputSchema === undefined
+          ? undefined
+          : vscode.Uri.parse(circuit.inputSchema),
       );
       const queries = new Array<Query>();
       for (const serializedQuery of circuit.queries) {
@@ -131,7 +136,7 @@ export class StateStore {
     // check workspace for circuit files
     const circuitFiles = await vscode.workspace.findFiles(
       circuitFilesPattern,
-      "**​/node_modules/**",
+      "**/node_modules/**",
     );
     state.circuits = this._loadCircuitsFromWorkspace(
       circuitFiles,
@@ -151,6 +156,7 @@ export class StateStore {
     if (state.circuits.length === 1 && previousState.circuits.length === 1) {
       state.circuits[0].queries = previousState.circuits[0].queries;
       state.circuits[0].defaultInputs = previousState.circuits[0].defaultInputs;
+      state.circuits[0].inputSchema = previousState.circuits[0].inputSchema;
     }
 
     await this._saveState(state);
@@ -183,6 +189,7 @@ export class StateStore {
       const circuit = new Circuit(
         new CircuitSource(circuitFileUri, circuitName),
         buildPath,
+        undefined,
         undefined,
       );
       circuits.push(circuit);

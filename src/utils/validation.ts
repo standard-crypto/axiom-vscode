@@ -13,9 +13,8 @@ import * as fs from "fs";
 import {
   COMMAND_ID_TRIGGER_COMPILE,
   COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
+  COMMAND_ID_UPDATE_CIRCUIT_INPUT_SCHEMA,
 } from "../commands";
-import { TransactionReceipt, toBigInt } from "ethers";
-import { createExplorerLink } from "@metamask/etherscan-link";
 
 export async function getConfigValueOrShowError(
   keyName: string,
@@ -60,32 +59,6 @@ export async function getConfigValueOrShowError(
   }
 
   return value;
-}
-
-export function getQueryIdOrShowError(
-  transactionReceipt: TransactionReceipt,
-  chainId: number,
-): string | undefined {
-  if (transactionReceipt?.logs && transactionReceipt.logs[1].topics[1]) {
-    const queryIdHex = transactionReceipt.logs[1].topics[1];
-    const queryId = toBigInt(queryIdHex);
-    return queryId.toString();
-  }
-  vscode.window
-    .showErrorMessage(
-      `No queryId found for transaction ${transactionReceipt?.hash}`,
-      "View Transaction on Etherscan",
-    )
-    .then(async (choice) => {
-      if (choice === "View Transaction on Etherscan") {
-        vscode.env.openExternal(
-          vscode.Uri.parse(
-            createExplorerLink(transactionReceipt.hash, `${chainId}`),
-          ),
-        );
-      }
-    });
-  return undefined;
 }
 
 export type QueryWithRequiredValuesSet = SetRequired<
@@ -161,6 +134,24 @@ export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
         if (choice === "Set default inputs") {
           vscode.commands.executeCommand(
             COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
+            {
+              circuit,
+            },
+          );
+        }
+      });
+    return false;
+  }
+  if (circuit.inputSchema === undefined) {
+    vscode.window
+      .showErrorMessage(
+        "No input schema found for this circuit",
+        "Set input schema",
+      )
+      .then((choice) => {
+        if (choice === "Set input schema") {
+          vscode.commands.executeCommand(
+            COMMAND_ID_UPDATE_CIRCUIT_INPUT_SCHEMA,
             {
               circuit,
             },
