@@ -86,7 +86,7 @@ export class SendQuery implements vscode.Disposable {
               const sender = await signer.getAddress();
 
               const sendQuery = await buildSendQuery({
-                axiom: axiom,
+                axiom,
                 dataQuery: outputJson.dataQuery,
                 computeQuery: outputJson.computeQuery,
                 callback: {
@@ -148,7 +148,7 @@ export class SendQuery implements vscode.Disposable {
                   message: "Cancelled",
                 });
                 await new Promise((resolve) => {
-                  setTimeout(resolve, 2000);
+                  setTimeout(resolve, 5000);
                 });
                 return;
               }
