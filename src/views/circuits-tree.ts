@@ -44,30 +44,6 @@ class CircuitDefaultInputFileTreeItem extends vscode.TreeItem {
   }
 }
 
-class CircuitInputSchemaFileTreeItem extends vscode.TreeItem {
-  constructor(
-    private circuit: Circuit,
-    private inputSchemaPath?: vscode.Uri | undefined,
-  ) {
-    super("Input Schema: ");
-    this.command = {
-      title: "Show Source",
-      command: COMMAND_ID_SHOW_SOURCE,
-      arguments: [{ path: inputSchemaPath }],
-    };
-    this.contextValue = "inputSchemaFile";
-    if (circuit.inputSchema === undefined) {
-      this.description = "[unset]";
-    } else {
-      this.description = vscode.workspace.asRelativePath(
-        circuit.inputSchema.path,
-      );
-    }
-    this.tooltip =
-      "A JSON file containing the input schema to use for this circuit";
-  }
-}
-
 class QueryHeaderItem extends vscode.TreeItem {
   constructor(
     private queries: Query[],
@@ -148,7 +124,6 @@ class CallbackExtraDataTreeItem extends vscode.TreeItem {
 type TreeElem =
   | Circuit
   | { inputPath: vscode.Uri | undefined; circuit: Circuit }
-  | { inputSchemaPath: vscode.Uri | undefined; circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
   | {
@@ -193,11 +168,6 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         element.circuit,
         element.inputPath,
       );
-    } else if ("inputSchemaPath" in element && "circuit" in element) {
-      return new CircuitInputSchemaFileTreeItem(
-        element.circuit,
-        element.inputSchemaPath,
-      );
     } else {
       return new QueryTreeItem(element.query, element.circuit);
     }
@@ -217,7 +187,6 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
       const config = vscode.workspace.getConfiguration("axiom");
       return [
         { inputPath: parent.defaultInputs, circuit: parent },
-        { inputSchemaPath: parent.inputSchema, circuit: parent },
         { queries: parent.queries, circuit: parent },
       ];
     }

@@ -4,7 +4,7 @@ import { Circuit } from "../models/circuit";
 import {
   assertCircuitCanBeCompiled,
   getConfigValueOrShowError,
-} from "../utils/validation";
+} from "../utils";
 import { Query } from "../models/query";
 import { CONFIG_KEYS } from "../config";
 

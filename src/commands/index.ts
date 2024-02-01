@@ -3,10 +3,7 @@ import { Compile, TriggerCompile } from "./compile";
 import { Run } from "./run";
 import { SendQuery } from "./send-query";
 import { AddQuery } from "./add-query";
-import {
-  UpdateCircuitDefaultInput,
-  UpdateCircuitInputSchema,
-} from "./update-circuit";
+import { UpdateCircuitDefaultInput } from "./update-circuit";
 import {
   DeleteQuery,
   RenameQuery,
@@ -39,9 +36,6 @@ export function registerCommands(
   context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));
   context.subscriptions.push(
     new UpdateCircuitDefaultInput(context, circuitsTree, stateStore),
-  );
-  context.subscriptions.push(
-    new UpdateCircuitInputSchema(context, circuitsTree, stateStore),
   );
   context.subscriptions.push(
     new RenameQuery(context, circuitsTree, stateStore),

@@ -1,25 +1,18 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import * as fs from "fs";
-import { Axiom } from "@axiom-crypto/client";
+import { buildSendQuery } from "@axiom-crypto/client";
+import { AxiomSdkCore } from "@axiom-crypto/core";
 import type { Query } from "../models/query";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
   getConfigValueOrShowError,
-} from "../utils/validation";
+} from "../utils";
 import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
-import { getFunctionFromTs } from "../utils";
+import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
+import { prove } from "@axiom-crypto/circuit/cliHandler";
+import { abbreviateAddr, readJsonFromFile } from "../utils";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
-
-function readJsonFromFile(relativePath: string) {
-  return JSON.parse(fs.readFileSync(path.resolve(relativePath), "utf8"));
-}
-
-function abbreviateAddr(address: string): string {
-  return address.slice(0, 6) + "..." + address.slice(38);
-}
 
 export class SendQuery implements vscode.Disposable {
   constructor(private context: vscode.ExtensionContext) {
@@ -55,41 +48,13 @@ export class SendQuery implements vscode.Disposable {
             return;
           }
 
-          const chainId = "11155111"; // sepolia
+          const chainId = 11155111; // sepolia
 
-          // import circuit from circuitFile
-          const circuit = await getFunctionFromTs(
-            query.circuit.source.filePath.fsPath,
-            query.circuit.source.functionName,
-          );
-
-          // import compiled circuit
-          const compiledCircuit = readJsonFromFile(
-            query.circuit.buildPath.fsPath,
-          );
-
-          // import inputs
-          const inputs = readJsonFromFile(query.inputPath.fsPath);
-
-          // import input schema
-          if (!query.circuit.inputSchema) {
-            return;
-          }
-          const inputSchema = readJsonFromFile(
-            query.circuit.inputSchema.fsPath,
-          );
-
-          const axiom = new Axiom({
-            circuit: circuit,
-            compiledCircuit: compiledCircuit,
-            inputSchema: inputSchema,
-            chainId: chainId,
-            provider: provider,
-            privateKey: privateKey,
-            version: "v2", // TODO: receive from config
-            callback: { target: query.callbackAddress },
+          const axiomSdk = new AxiomSdkCore({
+            providerUri: provider,
+            chainId: chainId.toString(),
+            version: "v2",
           });
-          await axiom.init();
 
           await vscode.window.withProgress(
             {
@@ -100,12 +65,57 @@ export class SendQuery implements vscode.Disposable {
             async (progress) => {
               // run the query
               progress.report({ increment: 0, message: "Running query..." });
-              const args = await axiom.prove(inputs);
+              await prove(query.circuit.source.filePath.fsPath, {
+                stats: false,
+                function: query.circuit.source.functionName,
+                compiled: query.circuit.buildPath.fsPath,
+                outputs: query.outputPath.fsPath,
+                inputs: query.inputPath.fsPath,
+                provider: provider,
+              });
 
+              // submit the query
               progress.report({
                 increment: 33,
-                message: "Generating query args...",
+                message: "Building and signing Ethereum transaction...",
               });
+              const outputJson = readJsonFromFile(query.outputPath.fsPath);
+
+              const rpcProvider = new JsonRpcProvider(provider, chainId);
+              const signer = new Wallet(privateKey, rpcProvider);
+              const sender = await signer.getAddress();
+
+              const sendQueryArgs = await buildSendQuery({
+                axiom: axiomSdk,
+                dataQuery: outputJson.dataQuery,
+                computeQuery: outputJson.computeQuery,
+                callback: {
+                  target: query.callbackAddress,
+                  extraData: query.callbackExtraData ?? "0x",
+                },
+                options: {
+                  refundee: query.refundAddress ?? sender,
+                  caller: sender,
+                  privateKey: privateKey,
+                  //   maxFeePerGas: options.maxFeePerGas,
+                  //   callbackGasLimit: options.callbackGasLimit,
+                },
+                caller: sender,
+              });
+
+              const tx = new Transaction();
+              tx.chainId = chainId;
+              tx.to = sendQueryArgs.address;
+              tx.data = sendQueryArgs.calldata;
+              tx.value = sendQueryArgs.value;
+              tx.nonce = await signer.getNonce();
+              tx.gasLimit = await signer.estimateGas(tx);
+              const populatedTx = await signer.populateTransaction(tx);
+
+              const maxFeePerGas =
+                (populatedTx.maxFeePerGas as bigint) +
+                (populatedTx.maxPriorityFeePerGas as bigint);
+              const maxFee = (populatedTx.gasLimit as bigint) * maxFeePerGas;
 
               // prompt user to confirm transaction value before sending
               const choice = await vscode.window.showInformationMessage(
@@ -113,13 +123,21 @@ export class SendQuery implements vscode.Disposable {
                 {
                   modal: true,
                   detail: [
-                    `Network: Sepolia`,
+                    `Network: ${rpcProvider._network.name}`,
                     "",
-                    `Address: ${abbreviateAddr(args.address)}`,
                     `Callback Address: ${abbreviateAddr(
                       query.callbackAddress,
                     )}`,
+                    `Refund Address: ${abbreviateAddr(
+                      query.refundAddress ?? sender,
+                    )}`,
                     "",
+                    `Tx From: ${abbreviateAddr(populatedTx.from!)}`,
+                    `Tx Value: ${ethers.formatEther(populatedTx.value!)} ETH`,
+                    `Max Fee: ${ethers.formatEther(maxFee)} ETH`,
+                    `Total Cost Max: ${ethers.formatEther(
+                      maxFee + (populatedTx.value as bigint),
+                    )} ETH`,
                   ].join("\n"),
                 },
                 "Confirm",
@@ -135,52 +153,44 @@ export class SendQuery implements vscode.Disposable {
                 return;
               }
 
-              // submit the query
+              const transactionResponse =
+                await signer.sendTransaction(populatedTx);
+
+              // wait for tx confirmation
+              progress.report({ increment: 33, message: "Broadcasting..." });
+              const transactionReceipt = await transactionResponse.wait();
+
+              if (transactionReceipt === null) {
+                progress.report({
+                  increment: 100,
+                  message: `Error submitting transaction`,
+                });
+                vscode.window.showErrorMessage(
+                  `Error broadcasting transaction`,
+                );
+                return;
+              }
+
+              // done
               progress.report({
-                increment: 33,
-                message: "Sending query...",
+                increment: 100,
+                message: `Success`,
               });
 
-              const receipt = await axiom.sendQuery(args);
-
-              if (receipt.status === "success") {
-                // done
-                progress.report({
-                  increment: 100,
-                  message: `Success`,
+              vscode.window
+                .showInformationMessage(
+                  `Query submitted successfully`,
+                  "View Transaction on Axiom Explorer",
+                )
+                .then(async (choice) => {
+                  if (choice === "View Transaction on Axiom Explorer") {
+                    vscode.env.openExternal(
+                      vscode.Uri.parse(
+                        axiomExplorerUrl + sendQueryArgs.queryId,
+                      ),
+                    );
+                  }
                 });
-
-                vscode.window
-                  .showInformationMessage(
-                    `Query submitted successfully`,
-                    "View Transaction on Axiom Explorer",
-                  )
-                  .then(async (choice) => {
-                    if (choice === "View Transaction on Axiom Explorer") {
-                      vscode.env.openExternal(
-                        vscode.Uri.parse(axiomExplorerUrl + args.queryId),
-                      );
-                    }
-                  });
-              } else {
-                progress.report({
-                  increment: 100,
-                  message: `Reverted`,
-                });
-
-                vscode.window
-                  .showErrorMessage(
-                    `Query transaction reverted`,
-                    "View Transaction on Axiom Explorer",
-                  )
-                  .then(async (choice) => {
-                    if (choice === "View Transaction on Axiom Explorer") {
-                      vscode.env.openExternal(
-                        vscode.Uri.parse(axiomExplorerUrl + args.queryId),
-                      );
-                    }
-                  });
-              }
             },
           );
         },

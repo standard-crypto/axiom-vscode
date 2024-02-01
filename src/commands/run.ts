@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
-import {
-  getConfigValueOrShowError,
-  assertQueryIsValid,
-} from "../utils/validation";
+import { getConfigValueOrShowError, assertQueryIsValid } from "../utils";
 import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";

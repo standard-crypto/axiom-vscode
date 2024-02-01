@@ -3,6 +3,7 @@ import { Circuit, CircuitSource } from "../models/circuit";
 import { extractCircuitName } from "../utils";
 import { Query } from "../models/query";
 import { CONFIG_KEYS } from "../config";
+import * as path from "path";
 
 interface SerializedState {
   circuits: Array<{
@@ -155,6 +156,7 @@ export class StateStore {
     );
     if (state.circuits.length === 1 && previousState.circuits.length === 1) {
       state.circuits[0].queries = previousState.circuits[0].queries;
+      this.updateQueryOutputPaths(state.circuits[0].queries);
       state.circuits[0].defaultInputs = previousState.circuits[0].defaultInputs;
       state.circuits[0].inputSchema = previousState.circuits[0].inputSchema;
     }
@@ -225,5 +227,15 @@ export class StateStore {
       StateStore._STORAGE_KEY,
       this._serializeState(state),
     );
+  }
+
+  private updateQueryOutputPaths(queries: Query[]) {
+    for (const query of queries) {
+      const buildFolder = path.dirname(query.circuit.buildPath.fsPath);
+      const outputPath = vscode.Uri.parse(
+        path.join(buildFolder, query.name, "output.json"),
+      );
+      query.outputPath = outputPath;
+    }
   }
 }

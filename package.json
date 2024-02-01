@@ -79,11 +79,6 @@
         "icon": "$(file-add)"
       },
       {
-        "command": "axiom-crypto.update-circuit-input-schema",
-        "title": "Update Circuit Input Schema",
-        "icon": "$(file-add)"
-      },
-      {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
         "icon": "$(circuit-board)"
@@ -144,11 +139,6 @@
           "command": "axiom-crypto.update-circuit-default-input",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == defaultInputFile"
-        },
-        {
-          "command": "axiom-crypto.update-circuit-input-schema",
-          "group": "inline@1",
-          "when": "view == axiom-circuits && viewItem == inputSchemaFile"
         },
         {
           "command": "axiom-crypto.rename-query",

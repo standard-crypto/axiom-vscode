@@ -13,7 +13,6 @@ import * as fs from "fs";
 import {
   COMMAND_ID_TRIGGER_COMPILE,
   COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
-  COMMAND_ID_UPDATE_CIRCUIT_INPUT_SCHEMA,
 } from "../commands";
 
 export async function getConfigValueOrShowError(
@@ -134,24 +133,6 @@ export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
         if (choice === "Set default inputs") {
           vscode.commands.executeCommand(
             COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
-            {
-              circuit,
-            },
-          );
-        }
-      });
-    return false;
-  }
-  if (circuit.inputSchema === undefined) {
-    vscode.window
-      .showErrorMessage(
-        "No input schema found for this circuit",
-        "Set input schema",
-      )
-      .then((choice) => {
-        if (choice === "Set input schema") {
-          vscode.commands.executeCommand(
-            COMMAND_ID_UPDATE_CIRCUIT_INPUT_SCHEMA,
             {
               circuit,
             },
