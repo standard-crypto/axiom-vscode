@@ -8,7 +8,6 @@ export class Circuit {
     public source: CircuitSource,
     public buildPath: vscode.Uri,
     public defaultInputs: vscode.Uri | undefined,
-    public inputSchema: vscode.Uri | undefined,
   ) {}
 
   get name(): string {

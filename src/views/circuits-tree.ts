@@ -182,7 +182,7 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
       return state.circuits;
     }
 
-    // Parent is a Circuit -> return Default Input, Input Schema and Queries
+    // Parent is a Circuit -> return Default Input and Queries
     else if (parent instanceof Circuit) {
       const config = vscode.workspace.getConfiguration("axiom");
       return [

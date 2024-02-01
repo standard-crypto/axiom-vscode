@@ -85,7 +85,7 @@ export class SendQuery implements vscode.Disposable {
               const signer = new Wallet(privateKey, rpcProvider);
               const sender = await signer.getAddress();
 
-              const sendQueryArgs = await buildSendQuery({
+              const sendQuery = await buildSendQuery({
                 axiom: axiomSdk,
                 dataQuery: outputJson.dataQuery,
                 computeQuery: outputJson.computeQuery,
@@ -105,9 +105,9 @@ export class SendQuery implements vscode.Disposable {
 
               const tx = new Transaction();
               tx.chainId = chainId;
-              tx.to = sendQueryArgs.address;
-              tx.data = sendQueryArgs.calldata;
-              tx.value = sendQueryArgs.value;
+              tx.to = sendQuery.address;
+              tx.data = sendQuery.calldata;
+              tx.value = sendQuery.value;
               tx.nonce = await signer.getNonce();
               tx.gasLimit = await signer.estimateGas(tx);
               const populatedTx = await signer.populateTransaction(tx);
@@ -186,7 +186,7 @@ export class SendQuery implements vscode.Disposable {
                   if (choice === "View Transaction on Axiom Explorer") {
                     vscode.env.openExternal(
                       vscode.Uri.parse(
-                        axiomExplorerUrl + sendQueryArgs.queryId,
+                        axiomExplorerUrl + sendQuery.queryId,
                       ),
                     );
                   }
