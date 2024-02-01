@@ -10,7 +10,7 @@ import {
   getConfigValueOrShowError,
 } from "../utils/validation";
 import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
-import { readJsonFromFile, abbreviateAddr } from "../utils";
+import { readJsonFromFile, abbreviateAddr, updateQueryOutput } from "../utils";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -21,6 +21,8 @@ export class SendQuery implements vscode.Disposable {
         COMMAND_ID_SEND_QUERY,
         async ({ query }: { query: Query }) => {
           console.log("Send Query", query);
+
+          updateQueryOutput(query);
 
           // make sure the Circuit can compile
           if (!assertCircuitCanBeCompiled(query.circuit)) {

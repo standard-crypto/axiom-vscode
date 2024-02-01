@@ -1,7 +1,11 @@
 import * as vscode from "vscode";
 import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
-import { getConfigValueOrShowError, assertQueryIsValid } from "../utils";
+import {
+  getConfigValueOrShowError,
+  assertQueryIsValid,
+  updateQueryOutput,
+} from "../utils";
 import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";
@@ -18,6 +22,8 @@ export class Run implements vscode.Disposable {
         COMMAND_ID_RUN,
         async ({ query }: { query: Query }) => {
           console.log("Run", query);
+
+          updateQueryOutput(query);
 
           // make sure the Circuit has compiled and the Query has all its values set
           if (!assertQueryIsValid(query)) {

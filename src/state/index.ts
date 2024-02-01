@@ -1,9 +1,8 @@
 import * as vscode from "vscode";
 import { Circuit, CircuitSource } from "../models/circuit";
-import { extractCircuitName } from "../utils";
+import { extractCircuitName, updateQueryOutput } from "../utils";
 import { Query } from "../models/query";
 import { CONFIG_KEYS } from "../config";
-import * as path from "path";
 
 interface SerializedState {
   circuits: Array<{
@@ -224,11 +223,7 @@ export class StateStore {
 
   private updateQueryOutputPaths(queries: Query[]) {
     for (const query of queries) {
-      const buildFolder = path.dirname(query.circuit.buildPath.fsPath);
-      const outputPath = vscode.Uri.parse(
-        path.join(buildFolder, query.name, "output.json"),
-      );
-      query.outputPath = outputPath;
+      updateQueryOutput(query);
     }
   }
 }
