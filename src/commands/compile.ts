@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
-import { compile } from "@axiom-crypto/circuit";
+import { compile } from "@axiom-crypto/circuit/cliHandler";
 import { Circuit } from "../models/circuit";
 import {
   assertCircuitCanBeCompiled,
   getConfigValueOrShowError,
-} from "../utils/validation";
+} from "../utils";
 import { Query } from "../models/query";
 import { CONFIG_KEYS } from "../config";
 
@@ -96,7 +96,7 @@ export async function rawCompile(provider: string, circuit: Circuit) {
     stats: false,
     function: circuit.source.functionName,
     inputs: circuit.defaultInputs?.fsPath,
-    output: circuit.buildPath.fsPath,
+    outputs: circuit.buildPath.fsPath,
     provider: provider,
   });
 }

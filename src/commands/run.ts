@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
-import { run } from "@axiom-crypto/circuit";
+import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
 import {
   getConfigValueOrShowError,
   assertQueryIsValid,
-} from "../utils/validation";
+  updateQueryOutput,
+} from "../utils";
 import { CONFIG_KEYS } from "../config";
 
 export const COMMAND_ID_RUN = "axiom-crypto.run";
@@ -21,6 +22,8 @@ export class Run implements vscode.Disposable {
         COMMAND_ID_RUN,
         async ({ query }: { query: Query }) => {
           console.log("Run", query);
+
+          updateQueryOutput(query);
 
           // make sure the Circuit has compiled and the Query has all its values set
           if (!assertQueryIsValid(query)) {
@@ -44,11 +47,11 @@ export class Run implements vscode.Disposable {
             async (progress) => {
               // run the query
               progress.report({ increment: 0, message: "Running query..." });
-              await run(query.circuit.source.filePath.fsPath, {
+              await prove(query.circuit.source.filePath.fsPath, {
                 stats: false,
                 function: query.circuit.source.functionName,
-                build: query.circuit.buildPath.fsPath,
-                output: query.outputPath.fsPath,
+                compiled: query.circuit.buildPath.fsPath,
+                outputs: query.outputPath.fsPath,
                 inputs: query.inputPath.fsPath,
                 provider: provider,
               });

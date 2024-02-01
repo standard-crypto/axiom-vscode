@@ -12,78 +12,60 @@
   resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.10.0.tgz#d2a39395c587e092d77cbbc80acf956a54f38bf7"
   integrity sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==
 
-"@axiom-crypto/circuit@0.1.3", "@axiom-crypto/circuit@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/circuit/-/circuit-0.1.3.tgz#616e34a408089d03066b823d52c708af1f58c734"
-  integrity sha512-bUiRThj/6+WqMCq8vqBtolt1R7tJuJhlAZLcUIk1YzbXeTgR6ikz2CiY33yf8hJKxeaNY9fqjT3JgIxu38Z2SA==
+"@axiom-crypto/circuit@2.0.3", "@axiom-crypto/circuit@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/circuit/-/circuit-2.0.3.tgz#0e15e890dd612a71b345a3c4ab978d27e629c6c3"
+  integrity sha512-CoutK1HVo4TI1hUlzxtHdl9DIYjMPCpQfpxOeKKqghZURADpj4pDWrQivKzxePjlBmbdX7NyS/Ox98tyzXYmeA==
   dependencies:
-    "@axiom-crypto/core" "^2.2.50"
-    "@axiom-crypto/halo2-lib-js" "0.2.13-alpha.1"
-    "@axiom-crypto/halo2-wasm" "0.2.10"
-    "@axiom-crypto/tools" "^0.3.33"
+    "@axiom-crypto/core" "2.3.4"
+    "@axiom-crypto/halo2-lib-js" "0.3.4"
+    "@axiom-crypto/halo2-wasm" "0.3.4"
+    "@axiom-crypto/tools" "2.0.0"
     commander "^11.1.0"
     ethers "^6.8.1"
     viem "^1.19.9"
 
-"@axiom-crypto/client@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/client/-/client-0.1.3.tgz#dbd9a68aa518234ed42ff477d560789b457d8b6d"
-  integrity sha512-w4Adh+EW11n66zm16xTgIyZi6OoG63lSK8QUCtt1UlIgMgTtEFdXKl/LWtpOI5m1D7rnO4IBzIUpK9/zHTZohQ==
+"@axiom-crypto/client@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/client/-/client-2.0.3.tgz#75e9250d89dffdd94f601befcf819cc31c1c9447"
+  integrity sha512-1QgDOoPtHpOnUO2Bp9FSKwffg8yZyaw4jKeeinnZ9BLSP5JXZ9auqv2ui7P6cZIbbGvnymr8KUwJTyg94FSD6g==
   dependencies:
-    "@axiom-crypto/circuit" "0.1.3"
-    "@axiom-crypto/core" "^2.2.50"
-    "@axiom-crypto/halo2-lib-js" "0.2.13-alpha.1"
-    "@axiom-crypto/halo2-wasm" "0.2.10"
-    "@axiom-crypto/tools" "^0.3.33"
+    "@axiom-crypto/circuit" "2.0.3"
+    "@axiom-crypto/core" "2.3.4"
+    chalk "^4.1.2"
     commander "^11.1.0"
-    ethers "^6.8.1"
-    viem "^1.19.9"
+    prompts "^2.4.2"
+    viem "^2.3.1"
 
-"@axiom-crypto/core@^2.2.50":
-  version "2.2.50"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/core/-/core-2.2.50.tgz#e78a9bb94f274cddc188551b07230a15d2bde234"
-  integrity sha512-SWiTntwZsgpvnsCdGxajcnQ1H6sOil9L6l451B0892gSz1pC/XkyZ61JN+IwgUZFdNhF5B+hFdzK+WaMO7GAbw==
+"@axiom-crypto/core@2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/core/-/core-2.3.4.tgz#c6a0f31479f8ec9220fb7a2373b90206ec7bd67e"
+  integrity sha512-3CcxPB2nEVcNblCMd4xf7ZzX9UL0T0UMYmDY5cmFGnKNQcnQcaSUOn3Ke5IVB9GSvsublKTRN7EWPhIOuNw9mA==
   dependencies:
-    "@axiom-crypto/halo2-lib-js" "0.2.10"
-    "@axiom-crypto/halo2-wasm" "0.2.7"
-    "@axiom-crypto/tools" "^0.3.33"
+    "@axiom-crypto/tools" "2.0.0"
     axios "^1.6.1"
     bs58 "^5.0.0"
     ethers "^6.8.1"
     merkletreejs "^0.3.11"
 
-"@axiom-crypto/halo2-lib-js@0.2.10":
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-lib-js/-/halo2-lib-js-0.2.10.tgz#2f9b9e02d1cdbdd635de3ea19811789622c63a40"
-  integrity sha512-gvO9fqB/w10q0RRoZ+Q9utvcWcDldHqIl4Jf8t9luoI+vXipZlyT8NIStykOvd6g64guymCnMeAv2vvObvHxIA==
+"@axiom-crypto/halo2-lib-js@0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-lib-js/-/halo2-lib-js-0.3.4.tgz#3ffdf46a2020676bed74eba8918b7ced42ced530"
+  integrity sha512-E/i7EqlcvjcfXZejL8HcpvFQIIMJxcMrVBXsdaDJGgEXVc6pEDJ07Hy3drLbhQ007ZJ8aultw3HSfD9gJRkh4w==
   dependencies:
-    "@axiom-crypto/halo2-wasm" "0.2.7"
+    "@axiom-crypto/halo2-wasm" "0.3.4"
     ethers "^6.8.0"
     prettier "1.18.2"
 
-"@axiom-crypto/halo2-lib-js@0.2.13-alpha.1":
-  version "0.2.13-alpha.1"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-lib-js/-/halo2-lib-js-0.2.13-alpha.1.tgz#7476171c9d5d529aca826ae62ae130d8493beb39"
-  integrity sha512-RACC6uGkVNNZDJwsT7yrF/XEq9oSB/hylup78V8JYlYhp3/dZ6fAnbiEPuTe9xFMqDpIYeTN7KO/h6VEqktZfw==
-  dependencies:
-    "@axiom-crypto/halo2-wasm" "0.2.10"
-    ethers "^6.8.0"
-    prettier "1.18.2"
+"@axiom-crypto/halo2-wasm@0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-wasm/-/halo2-wasm-0.3.4.tgz#c07a1d25149c84a0d3d2300f2d936160cb97e5c7"
+  integrity sha512-SUHXnydtx5rY0gQ2zWy0Br6L3iaAFo5RH/AMnOCSM4Nb3inqinBEnXQgEPZ45+EFmeOfRi1xOVUBdo6keZlacQ==
 
-"@axiom-crypto/halo2-wasm@0.2.10":
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-wasm/-/halo2-wasm-0.2.10.tgz#a755a48cf06a461c2aa815171ae04e58e65fcf90"
-  integrity sha512-88VPIGeLUPYp+kIgKuJ4QBAKZ5SbwtJheBca5DuZdyb/9vGZ02gyeyQe6/2N7yVDIn3hupHhgfAc4mqm1/4ddw==
-
-"@axiom-crypto/halo2-wasm@0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-wasm/-/halo2-wasm-0.2.7.tgz#67cec91b6110415c40ecfdd30b1eac9735a1121f"
-  integrity sha512-pmgFCkCJUlFgh5NCLR59WpWIiBegNxBRAAlA2UxPMga1Pba02ynZgf6SW0tbQaezMiWUdTA9SfpeosovcNI6Yg==
-
-"@axiom-crypto/tools@^0.3.33":
-  version "0.3.33"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/tools/-/tools-0.3.33.tgz#304044740ae68600e9c85307ae9dd7ee03fb669d"
-  integrity sha512-1ABAgXIZ2bNqHKTBcYGsL0tNQrX6PLM/1fHnkuT6g4WgHBMCoZuXyuTQK/CdoxsK/L3y253v9YW/5WOD9FI0Og==
+"@axiom-crypto/tools@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/tools/-/tools-2.0.0.tgz#68f5ecadb5405864e61ed75cac86a24703cf30a9"
+  integrity sha512-zoNlRRTyS98xysKrui2g+/f+A6+LiSi7wNw1m+xbCcDkY5/yz52VkbpGt+DTfo5FboiqTaXAq5f5CidNg4Z0mQ==
   dependencies:
     ethers "^6.7.0"
 
@@ -163,11 +145,6 @@
     strip-ansi-cjs "npm:strip-ansi@^6.0.1"
     wrap-ansi "^8.1.0"
     wrap-ansi-cjs "npm:wrap-ansi@^7.0.0"
-
-"@metamask/etherscan-link@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@metamask/etherscan-link/-/etherscan-link-3.0.0.tgz#264610dff793c1d1da30814a48612d69d5f59d02"
-  integrity sha512-JSHrHRTKX/ZqCgxpiVN4jYVkamHCKdAz7+CFPMPgEen57+pYASg/gbEd8WEFmyrmh+OnQXdkBJB23tGdkdxBkQ==
 
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"
@@ -410,6 +387,11 @@ abitype@0.9.8:
   resolved "https://registry.yarnpkg.com/abitype/-/abitype-0.9.8.tgz#1f120b6b717459deafd213dfbf3a3dd1bf10ae8c"
   integrity sha512-puLifILdm+8sjyss4S+fsUN09obiT1g2YW6CtcQF+QDzxR0euzgEB29MZujC6zMk2a6SVmtttq1fc6+YFA7WYQ==
 
+abitype@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.0.tgz#237176dace81d90d018bebf3a45cb42f2a2d9e97"
+  integrity sha512-NMeMah//6bJ56H5XRj8QCV4AwuW6hB6zqz2LnhhLdcWVQOsXki6/Pn3APeqxCma62nXIcmZWdu1DlHWS74umVQ==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -580,7 +562,7 @@ camelcase@^6.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
-chalk@^4.0.0, chalk@^4.1.0:
+chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -1232,6 +1214,11 @@ keyv@^4.5.3:
   dependencies:
     json-buffer "3.0.1"
 
+kleur@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
+  integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
+
 levn@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/levn/-/levn-0.4.1.tgz#ae4562c007473b932a6200d403268dd2fffc6ade"
@@ -1504,6 +1491,14 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
+prompts@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/prompts/-/prompts-2.4.2.tgz#7b57e73b3a48029ad10ebd44f74b01722a4cb069"
+  integrity sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==
+  dependencies:
+    kleur "^3.0.3"
+    sisteransi "^1.0.5"
+
 proxy-from-env@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz#e102f16ca355424865755d2c9e8ea4f24d58c3e2"
@@ -1620,6 +1615,11 @@ signal-exit@^4.0.1:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
+
+sisteransi@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
+  integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
 slash@^3.0.0:
   version "3.0.0"
@@ -1773,6 +1773,20 @@ viem@^1.19.9:
     "@scure/bip32" "1.3.2"
     "@scure/bip39" "1.2.1"
     abitype "0.9.8"
+    isows "1.0.3"
+    ws "8.13.0"
+
+viem@^2.3.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.6.1.tgz#aaab145746e019fdb0a838e32c19bad69d6b2a15"
+  integrity sha512-565cKS2fQ8XU9sfQo5NGAZXdKwPFjof4nO3NUyElVHKqKw9l5/y2iDDMEubvxm09rBlzibJ+Sw/mI4jnnkQE4g==
+  dependencies:
+    "@adraffy/ens-normalize" "1.10.0"
+    "@noble/curves" "1.2.0"
+    "@noble/hashes" "1.3.2"
+    "@scure/bip32" "1.3.2"
+    "@scure/bip39" "1.2.1"
+    abitype "1.0.0"
     isows "1.0.3"
     ws "8.13.0"
 

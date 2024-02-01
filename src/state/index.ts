@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Circuit, CircuitSource } from "../models/circuit";
-import { extractCircuitName } from "../utils";
+import { extractCircuitName, updateQueryOutput } from "../utils";
 import { Query } from "../models/query";
 import { CONFIG_KEYS } from "../config";
 
@@ -131,7 +131,7 @@ export class StateStore {
     // check workspace for circuit files
     const circuitFiles = await vscode.workspace.findFiles(
       circuitFilesPattern,
-      "**​/node_modules/**",
+      "**/node_modules/**",
     );
     state.circuits = this._loadCircuitsFromWorkspace(
       circuitFiles,
@@ -150,6 +150,7 @@ export class StateStore {
     );
     if (state.circuits.length === 1 && previousState.circuits.length === 1) {
       state.circuits[0].queries = previousState.circuits[0].queries;
+      this.updateQueryOutputPaths(state.circuits[0].queries);
       state.circuits[0].defaultInputs = previousState.circuits[0].defaultInputs;
     }
 
@@ -218,5 +219,11 @@ export class StateStore {
       StateStore._STORAGE_KEY,
       this._serializeState(state),
     );
+  }
+
+  private updateQueryOutputPaths(queries: Query[]) {
+    for (const query of queries) {
+      updateQueryOutput(query);
+    }
   }
 }

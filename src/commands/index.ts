@@ -3,7 +3,7 @@ import { Compile, TriggerCompile } from "./compile";
 import { Run } from "./run";
 import { SendQuery } from "./send-query";
 import { AddQuery } from "./add-query";
-import { UpdateCircuitDefaultInput } from "./update-circuit-default-input";
+import { UpdateCircuitDefaultInput } from "./update-circuit";
 import {
   DeleteQuery,
   RenameQuery,
@@ -22,7 +22,7 @@ export * from "./run";
 export * from "./send-query";
 export * from "./add-query";
 export * from "./show-source";
-export * from "./update-circuit-default-input";
+export * from "./update-circuit";
 
 export function registerCommands(
   context: vscode.ExtensionContext,

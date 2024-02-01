@@ -1,28 +1,18 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import * as fs from "fs";
 import { buildSendQuery } from "@axiom-crypto/client";
-import { Axiom } from "@axiom-crypto/core";
-import { run } from "@axiom-crypto/circuit";
+import { AxiomSdkCore } from "@axiom-crypto/core";
+import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
 import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
   getConfigValueOrShowError,
-  getQueryIdOrShowError,
 } from "../utils/validation";
 import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
+import { readJsonFromFile, abbreviateAddr, updateQueryOutput } from "../utils";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
-
-function readJsonFromFile(relativePath: string) {
-  return JSON.parse(fs.readFileSync(path.resolve(relativePath), "utf8"));
-}
-
-function abbreviateAddr(address: string): string {
-  return address.slice(0, 6) + "..." + address.slice(38);
-}
 
 export class SendQuery implements vscode.Disposable {
   constructor(private context: vscode.ExtensionContext) {
@@ -31,6 +21,8 @@ export class SendQuery implements vscode.Disposable {
         COMMAND_ID_SEND_QUERY,
         async ({ query }: { query: Query }) => {
           console.log("Send Query", query);
+
+          updateQueryOutput(query);
 
           // make sure the Circuit can compile
           if (!assertCircuitCanBeCompiled(query.circuit)) {
@@ -58,11 +50,11 @@ export class SendQuery implements vscode.Disposable {
             return;
           }
 
-          const chainId = 5; // TODO: replace with sepolia 11155111
+          const chainId = 11155111; // sepolia
 
-          const axiom = new Axiom({
+          const axiom = new AxiomSdkCore({
             providerUri: provider,
-            chainId,
+            chainId: chainId.toString(),
             version: "v2", // TODO: receive from config
           });
 
@@ -75,11 +67,11 @@ export class SendQuery implements vscode.Disposable {
             async (progress) => {
               // run the query
               progress.report({ increment: 0, message: "Running query..." });
-              await run(query.circuit.source.filePath.fsPath, {
+              await prove(query.circuit.source.filePath.fsPath, {
                 stats: false,
                 function: query.circuit.source.functionName,
-                build: query.circuit.buildPath.fsPath,
-                output: query.outputPath.fsPath,
+                compiled: query.circuit.buildPath.fsPath,
+                outputs: query.outputPath.fsPath,
                 inputs: query.inputPath.fsPath,
                 provider: provider,
               });
@@ -105,6 +97,8 @@ export class SendQuery implements vscode.Disposable {
                 },
                 options: {
                   refundee: query.refundAddress ?? sender,
+                  caller: sender,
+                  privateKey: privateKey,
                   //   maxFeePerGas: options.maxFeePerGas,
                   //   callbackGasLimit: options.callbackGasLimit,
                 },
@@ -158,6 +152,7 @@ export class SendQuery implements vscode.Disposable {
                 await new Promise((resolve) => {
                   setTimeout(resolve, 5000);
                 });
+                return;
               }
 
               const transactionResponse =
@@ -178,20 +173,6 @@ export class SendQuery implements vscode.Disposable {
                 return;
               }
 
-              // get query id
-              const queryId = getQueryIdOrShowError(
-                transactionReceipt,
-                chainId,
-              );
-
-              if (queryId === undefined) {
-                progress.report({
-                  increment: 100,
-                  message: `Error`,
-                });
-                return;
-              }
-
               // done
               progress.report({
                 increment: 100,
@@ -206,7 +187,7 @@ export class SendQuery implements vscode.Disposable {
                 .then(async (choice) => {
                   if (choice === "View Transaction on Axiom Explorer") {
                     vscode.env.openExternal(
-                      vscode.Uri.parse(axiomExplorerUrl + queryId),
+                      vscode.Uri.parse(axiomExplorerUrl + sendQuery.queryId),
                     );
                   }
                 });
