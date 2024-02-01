@@ -185,9 +185,7 @@ export class SendQuery implements vscode.Disposable {
                 .then(async (choice) => {
                   if (choice === "View Transaction on Axiom Explorer") {
                     vscode.env.openExternal(
-                      vscode.Uri.parse(
-                        axiomExplorerUrl + sendQuery.queryId,
-                      ),
+                      vscode.Uri.parse(axiomExplorerUrl + sendQuery.queryId),
                     );
                   }
                 });
