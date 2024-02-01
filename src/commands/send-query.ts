@@ -50,7 +50,7 @@ export class SendQuery implements vscode.Disposable {
 
           const chainId = 11155111; // sepolia
 
-          const axiomSdk = new AxiomSdkCore({
+          const axiom = new AxiomSdkCore({
             providerUri: provider,
             chainId: chainId.toString(),
             version: "v2", // TODO: receive from config
@@ -86,7 +86,7 @@ export class SendQuery implements vscode.Disposable {
               const sender = await signer.getAddress();
 
               const sendQuery = await buildSendQuery({
-                axiom: axiomSdk,
+                axiom: axiom,
                 dataQuery: outputJson.dataQuery,
                 computeQuery: outputJson.computeQuery,
                 callback: {
