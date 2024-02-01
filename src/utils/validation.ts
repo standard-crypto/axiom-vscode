@@ -32,6 +32,31 @@ export async function getConfigValueOrShowError(
     configFilePath ?? ".env",
   );
 
+  if (!fs.existsSync(configFile)) {
+    vscode.window
+      .showErrorMessage(
+        `Config file not found at ${configFilePath}`,
+        "Open Axiom settings",
+        `Create ${configFilePath}`,
+      )
+      .then(async (choice) => {
+        if (choice === "Open Axiom settings") {
+          vscode.commands.executeCommand(
+            "workbench.action.openWorkspaceSettings",
+            "axiom",
+          );
+        } else if (choice === `Create ${configFilePath}`) {
+          await fs.promises.writeFile(
+            configFile,
+            'PROVIDER_URI_SEPOLIA=""\nPRIVATE_KEY_SEPOLIA=""',
+          );
+          const document = await vscode.workspace.openTextDocument(configFile);
+          await vscode.window.showTextDocument(document);
+        }
+      });
+    return undefined;
+  }
+
   const configFileContent = fs.readFileSync(configFile, "utf-8");
   const configFileParsed = dotenv.parse(configFileContent);
   const value = configFileParsed[keyName];
