@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
 import { buildSendQuery } from "@axiom-crypto/client";
 import { AxiomSdkCore } from "@axiom-crypto/core";
+import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
+import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
   assertCircuitCanBeCompiled,
   assertQueryIsValid,
   getConfigValueOrShowError,
-} from "../utils";
+} from "../utils/validation";
 import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
-import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
-import { prove } from "@axiom-crypto/circuit/cliHandler";
-import { abbreviateAddr, readJsonFromFile } from "../utils";
+import { readJsonFromFile, abbreviateAddr } from "../utils";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -53,7 +53,7 @@ export class SendQuery implements vscode.Disposable {
           const axiomSdk = new AxiomSdkCore({
             providerUri: provider,
             chainId: chainId.toString(),
-            version: "v2",
+            version: "v2", // TODO: receive from config
           });
 
           await vscode.window.withProgress(
