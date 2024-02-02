@@ -3,6 +3,10 @@
   "name": "axiom-crypto",
   "displayName": "Axiom Crypto",
   "description": "Support for projects built with Axiom, the ZK Coprocessor for Ethereum (https://axiom.xyz)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standard-crypto/axiom-vscode.git"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.84.0"
@@ -189,7 +193,8 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile",
+    "vscode:prepublish": "yarn run recompile",
+    "vscode:package": "vsce package",
     "compile": "tsc -p ./",
     "recompile": "rm -Rf out && yarn compile",
     "watch": "tsc -watch -p ./",
@@ -206,14 +211,15 @@
     "@typescript-eslint/parser": "^6.13.1",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.23.0",
     "eslint": "^8.54.0",
-    "prettier": "^3.1.1",
-    "typescript": "^5.3.2"
+    "prettier": "^3.1.1"
   },
   "dependencies": {
     "@axiom-crypto/circuit": "^2.0.3",
     "@axiom-crypto/client": "^2.0.3",
     "dotenv": "^16.3.1",
-    "ethers": "^6.9.0"
+    "ethers": "^6.9.0",
+    "typescript": "^5.3.2"
   }
 }
