@@ -45,3 +45,36 @@ export function extractCircuitName(
     }
   }
 }
+
+export function exportsDefaultInputs(circuitFileUri: vscode.Uri): boolean {
+  // load the typescript program from its source file
+  const program = ts.createProgram([circuitFileUri.fsPath], {});
+  const sourceFile = program.getSourceFile(circuitFileUri.fsPath);
+  if (sourceFile === undefined) {
+    return false;
+  }
+  const typeChecker = program.getTypeChecker();
+
+  // fetch all exports from the circuit file
+  const fileSymbol = typeChecker.getSymbolAtLocation(sourceFile);
+  if (fileSymbol === undefined) {
+    return false;
+  }
+  const exports = program.getTypeChecker().getExportsOfModule(fileSymbol);
+
+  // search exports for anything that looks like a variable
+  for (const exp of exports) {
+    if (exp.declarations === undefined || exp.declarations.length === 0) {
+      continue;
+    }
+    const declaration = exp.declarations[0];
+
+    if (ts.isVariableDeclaration(declaration)) {
+      const name = (declaration.name as ts.Identifier).escapedText.toString();
+      if (name === "defaultInputs") {
+        return true;
+      }
+    }
+  }
+  return false;
+}

@@ -67,14 +67,15 @@ export class SendQuery implements vscode.Disposable {
             async (progress) => {
               // run the query
               progress.report({ increment: 0, message: "Proving circuit..." });
-              await prove(query.circuit.source.filePath.fsPath, {
-                stats: false,
-                function: query.circuit.source.functionName,
-                compiled: query.circuit.buildPath.fsPath,
-                outputs: query.outputPath.fsPath,
-                inputs: query.inputPath.fsPath,
-                provider: provider,
-              });
+              await prove(
+                query.circuit.buildPath.fsPath,
+                query.inputPath.fsPath,
+                {
+                  stats: false,
+                  outputs: query.outputPath.fsPath,
+                  provider: provider,
+                },
+              );
 
               // submit the query
               progress.report({

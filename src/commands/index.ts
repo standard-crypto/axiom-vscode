@@ -3,7 +3,6 @@ import { Compile, TriggerCompile } from "./compile";
 import { Prove } from "./prove";
 import { SendQuery } from "./send-query";
 import { AddQuery } from "./add-query";
-import { UpdateCircuitDefaultInput } from "./update-circuit";
 import {
   DeleteQuery,
   RenameQuery,
@@ -22,7 +21,6 @@ export * from "./prove";
 export * from "./send-query";
 export * from "./add-query";
 export * from "./show-source";
-export * from "./update-circuit";
 
 export function registerCommands(
   context: vscode.ExtensionContext,
@@ -34,9 +32,6 @@ export function registerCommands(
   context.subscriptions.push(new Prove(context));
   context.subscriptions.push(new SendQuery(context));
   context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));
-  context.subscriptions.push(
-    new UpdateCircuitDefaultInput(context, circuitsTree, stateStore),
-  );
   context.subscriptions.push(
     new RenameQuery(context, circuitsTree, stateStore),
   );
