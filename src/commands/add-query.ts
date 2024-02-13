@@ -24,7 +24,7 @@ export class AddQuery implements vscode.Disposable {
 
           const buildFolder = path.dirname(circuit.buildPath.fsPath);
           const outputPath = vscode.Uri.parse(
-            path.join(buildFolder, queryName, "output.json"),
+            path.join(buildFolder, queryName, "proven.json"),
           );
 
           const query = new Query({

@@ -22,7 +22,7 @@ export class SendQuery implements vscode.Disposable {
         async ({ query }: { query: Query }) => {
           console.log("Send Query", query);
 
-          updateQueryOutput(query);
+          updateQueryOutput(query, true);
 
           // make sure the Circuit can compile
           if (!assertCircuitCanBeCompiled(query.circuit)) {
@@ -66,7 +66,7 @@ export class SendQuery implements vscode.Disposable {
             },
             async (progress) => {
               // run the query
-              progress.report({ increment: 0, message: "Running query..." });
+              progress.report({ increment: 0, message: "Proving circuit..." });
               await prove(query.circuit.source.filePath.fsPath, {
                 stats: false,
                 function: query.circuit.source.functionName,
@@ -159,7 +159,7 @@ export class SendQuery implements vscode.Disposable {
                 await signer.sendTransaction(populatedTx);
 
               // wait for tx confirmation
-              progress.report({ increment: 33, message: "Broadcasting..." });
+              progress.report({ increment: 33, message: "Sending Query..." });
               const transactionReceipt = await transactionResponse.wait();
 
               if (transactionReceipt === null) {
@@ -176,7 +176,12 @@ export class SendQuery implements vscode.Disposable {
               // done
               progress.report({
                 increment: 100,
-                message: `Success`,
+                message: `Query Sent`,
+              });
+
+              // wait 10 seconds before showing explorer link
+              await new Promise((resolve) => {
+                setTimeout(resolve, 10000);
               });
 
               vscode.window

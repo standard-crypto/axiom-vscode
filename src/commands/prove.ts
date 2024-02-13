@@ -8,20 +8,20 @@ import {
 } from "../utils";
 import { CONFIG_KEYS } from "../config";
 
-export const COMMAND_ID_RUN = "axiom-crypto.run";
+export const COMMAND_ID_PROVE = "axiom-crypto.prove";
 
-export interface RunArgs {
+export interface ProveArgs {
   inputFilePath?: vscode.Uri;
   rpcProvider?: string;
 }
 
-export class Run implements vscode.Disposable {
+export class Prove implements vscode.Disposable {
   constructor(private context: vscode.ExtensionContext) {
     this.context.subscriptions.push(
       vscode.commands.registerCommand(
-        COMMAND_ID_RUN,
+        COMMAND_ID_PROVE,
         async ({ query }: { query: Query }) => {
-          console.log("Run", query);
+          console.log("Prove", query);
 
           updateQueryOutput(query);
 
@@ -45,8 +45,8 @@ export class Run implements vscode.Disposable {
               cancellable: false,
             },
             async (progress) => {
-              // run the query
-              progress.report({ increment: 0, message: "Running query..." });
+              // prove
+              progress.report({ increment: 0, message: "Proving..." });
               await prove(query.circuit.source.filePath.fsPath, {
                 stats: false,
                 function: query.circuit.source.functionName,
@@ -66,7 +66,7 @@ export class Run implements vscode.Disposable {
 
           vscode.window
             .showInformationMessage(
-              `Run result saved to ${vscode.workspace.asRelativePath(
+              `Proof result saved to ${vscode.workspace.asRelativePath(
                 query.outputPath,
               )}`,
               "Go to result",

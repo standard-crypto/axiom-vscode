@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Compile, TriggerCompile } from "./compile";
-import { Run } from "./run";
+import { Prove } from "./prove";
 import { SendQuery } from "./send-query";
 import { AddQuery } from "./add-query";
 import { UpdateCircuitDefaultInput } from "./update-circuit";
@@ -18,7 +18,7 @@ import { StateStore } from "../state";
 import { ShowSource } from "./show-source";
 
 export * from "./compile";
-export * from "./run";
+export * from "./prove";
 export * from "./send-query";
 export * from "./add-query";
 export * from "./show-source";
@@ -31,7 +31,7 @@ export function registerCommands(
 ) {
   context.subscriptions.push(new Compile(context));
   context.subscriptions.push(new TriggerCompile(context));
-  context.subscriptions.push(new Run(context));
+  context.subscriptions.push(new Prove(context));
   context.subscriptions.push(new SendQuery(context));
   context.subscriptions.push(new AddQuery(context, circuitsTree, stateStore));
   context.subscriptions.push(

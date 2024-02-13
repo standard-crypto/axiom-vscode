@@ -178,7 +178,7 @@ export class StateStore {
         vscode.workspace.workspaceFolders[0].uri,
         buildDirectory,
         circuitName,
-        "build.json",
+        "compiled.json",
       );
 
       const circuit = new Circuit(

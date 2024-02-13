@@ -85,7 +85,7 @@
       {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
-        "icon": "$(circuit-board)"
+        "icon": "$(package)"
       },
       {
         "command": "axiom-crypto.send-query",
@@ -98,8 +98,8 @@
         "icon": "$(go-to-file)"
       },
       {
-        "command": "axiom-crypto.run",
-        "title": "Run Circuit",
+        "command": "axiom-crypto.prove",
+        "title": "Prove Circuit",
         "icon": "$(run)"
       },
       {
@@ -155,7 +155,7 @@
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.run",
+          "command": "axiom-crypto.prove",
           "group": "inline@3",
           "when": "view == axiom-circuits && viewItem == query"
         },
