@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/standard-crypto/axiom-vscode.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.84.0"
   },
@@ -78,14 +78,9 @@
         "icon": "$(pencil)"
       },
       {
-        "command": "axiom-crypto.update-circuit-default-input",
-        "title": "Update Circuit Default Input",
-        "icon": "$(file-add)"
-      },
-      {
         "command": "axiom-crypto.compile",
         "title": "Compile Circuit",
-        "icon": "$(circuit-board)"
+        "icon": "$(package)"
       },
       {
         "command": "axiom-crypto.send-query",
@@ -98,8 +93,8 @@
         "icon": "$(go-to-file)"
       },
       {
-        "command": "axiom-crypto.run",
-        "title": "Run Circuit",
+        "command": "axiom-crypto.prove",
+        "title": "Prove Circuit",
         "icon": "$(run)"
       },
       {
@@ -140,11 +135,6 @@
           "when": "view == axiom-circuits && viewItem == circuit"
         },
         {
-          "command": "axiom-crypto.update-circuit-default-input",
-          "group": "inline@1",
-          "when": "view == axiom-circuits && viewItem == defaultInputFile"
-        },
-        {
           "command": "axiom-crypto.rename-query",
           "group": "inline@1",
           "when": "view == axiom-circuits && viewItem == query"
@@ -155,7 +145,7 @@
           "when": "view == axiom-circuits && viewItem == query"
         },
         {
-          "command": "axiom-crypto.run",
+          "command": "axiom-crypto.prove",
           "group": "inline@3",
           "when": "view == axiom-circuits && viewItem == query"
         },
@@ -216,9 +206,9 @@
     "prettier": "^3.1.1"
   },
   "dependencies": {
-    "@axiom-crypto/circuit": "^2.0.3",
-    "@axiom-crypto/client": "^2.0.3",
-    "@axiom-crypto/core": "^2.3.4",
+    "@axiom-crypto/circuit": "^2.0.4",
+    "@axiom-crypto/client": "^2.0.4",
+    "@axiom-crypto/core": "^2.3.5",
     "dotenv": "^16.3.1",
     "ethers": "^6.9.0",
     "type-fest": "^4.10.2",

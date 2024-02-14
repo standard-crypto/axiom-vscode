@@ -7,7 +7,6 @@ export class Circuit {
   constructor(
     public source: CircuitSource,
     public buildPath: vscode.Uri,
-    public defaultInputs: vscode.Uri | undefined,
   ) {}
 
   get name(): string {

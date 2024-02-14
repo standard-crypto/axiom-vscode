@@ -12,37 +12,37 @@
   resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.10.0.tgz#d2a39395c587e092d77cbbc80acf956a54f38bf7"
   integrity sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==
 
-"@axiom-crypto/circuit@2.0.3", "@axiom-crypto/circuit@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/circuit/-/circuit-2.0.3.tgz#0e15e890dd612a71b345a3c4ab978d27e629c6c3"
-  integrity sha512-CoutK1HVo4TI1hUlzxtHdl9DIYjMPCpQfpxOeKKqghZURADpj4pDWrQivKzxePjlBmbdX7NyS/Ox98tyzXYmeA==
+"@axiom-crypto/circuit@2.0.4", "@axiom-crypto/circuit@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/circuit/-/circuit-2.0.4.tgz#0b2ca41f3a3cd858879dd031ac8e0e8e32c700a1"
+  integrity sha512-yy102cSR8HOpumhm0PRAiE6TS28N3mnrUQN7pNnLzsvg8K6EipIXufZGbn8VMadelf91F37PuR76egRFIcH3tg==
   dependencies:
-    "@axiom-crypto/core" "2.3.4"
+    "@axiom-crypto/core" "2.3.5"
     "@axiom-crypto/halo2-lib-js" "0.3.4"
     "@axiom-crypto/halo2-wasm" "0.3.4"
-    "@axiom-crypto/tools" "2.0.0"
+    "@axiom-crypto/tools" "2.0.1"
     commander "^11.1.0"
     ethers "^6.8.1"
     viem "^1.19.9"
 
-"@axiom-crypto/client@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/client/-/client-2.0.3.tgz#75e9250d89dffdd94f601befcf819cc31c1c9447"
-  integrity sha512-1QgDOoPtHpOnUO2Bp9FSKwffg8yZyaw4jKeeinnZ9BLSP5JXZ9auqv2ui7P6cZIbbGvnymr8KUwJTyg94FSD6g==
+"@axiom-crypto/client@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/client/-/client-2.0.4.tgz#f161fa08aaccb05d8225fb8d8bdb9c0f883e1ed3"
+  integrity sha512-jyISkg36vJBIUnPlCI9bEYQjs2BnCJT4m40gZs3QIxHvA7g1eURMHaGnTt5vVA+2aVwA3HnmVFInusMw7hABJQ==
   dependencies:
-    "@axiom-crypto/circuit" "2.0.3"
-    "@axiom-crypto/core" "2.3.4"
+    "@axiom-crypto/circuit" "2.0.4"
+    "@axiom-crypto/core" "2.3.5"
     chalk "^4.1.2"
     commander "^11.1.0"
     prompts "^2.4.2"
     viem "^2.3.1"
 
-"@axiom-crypto/core@2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/core/-/core-2.3.4.tgz#c6a0f31479f8ec9220fb7a2373b90206ec7bd67e"
-  integrity sha512-3CcxPB2nEVcNblCMd4xf7ZzX9UL0T0UMYmDY5cmFGnKNQcnQcaSUOn3Ke5IVB9GSvsublKTRN7EWPhIOuNw9mA==
+"@axiom-crypto/core@2.3.5", "@axiom-crypto/core@^2.3.5":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/core/-/core-2.3.5.tgz#4bbbf79d274530952a5064bcfc7670b6586354d0"
+  integrity sha512-1O/oM4gvZWf0VtVtypHAKmJQFluMj0k976OuM6HOGnOgNu+TqWt/9jUZeZ9HEUWGXEoFCNI5l9dA5pgdnJN1/g==
   dependencies:
-    "@axiom-crypto/tools" "2.0.0"
+    "@axiom-crypto/tools" "2.0.1"
     axios "^1.6.1"
     bs58 "^5.0.0"
     ethers "^6.8.1"
@@ -62,10 +62,10 @@
   resolved "https://registry.yarnpkg.com/@axiom-crypto/halo2-wasm/-/halo2-wasm-0.3.4.tgz#c07a1d25149c84a0d3d2300f2d936160cb97e5c7"
   integrity sha512-SUHXnydtx5rY0gQ2zWy0Br6L3iaAFo5RH/AMnOCSM4Nb3inqinBEnXQgEPZ45+EFmeOfRi1xOVUBdo6keZlacQ==
 
-"@axiom-crypto/tools@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@axiom-crypto/tools/-/tools-2.0.0.tgz#68f5ecadb5405864e61ed75cac86a24703cf30a9"
-  integrity sha512-zoNlRRTyS98xysKrui2g+/f+A6+LiSi7wNw1m+xbCcDkY5/yz52VkbpGt+DTfo5FboiqTaXAq5f5CidNg4Z0mQ==
+"@axiom-crypto/tools@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@axiom-crypto/tools/-/tools-2.0.1.tgz#da63ee85ddda5848ebac5a2d55d06e712a1382dc"
+  integrity sha512-rMJFvxhryU2o4GSKibGLygJfY7+yP8N5PddeuD2XiRo/BD2F4OY7MrdmsxQLoCjvNxECqVa/gcLTCratjSTMdw==
   dependencies:
     ethers "^6.7.0"
 
@@ -2360,6 +2360,11 @@ type-fest@^0.20.2:
   version "0.20.2"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.20.2.tgz#1bf207f4b28f91583666cb5fbd327887301cd5f4"
   integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
+
+type-fest@^4.10.2:
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.10.2.tgz#3abdb144d93c5750432aac0d73d3e85fcab45738"
+  integrity sha512-anpAG63wSpdEbLwOqH8L84urkL6PiVIov3EMmgIhhThevh9aiMQov+6Btx0wldNcvm4wV+e2/Rt1QdDwKHFbHw==
 
 typed-rest-client@^1.8.4:
   version "1.8.11"

@@ -35,7 +35,7 @@ export class RenameQuery implements vscode.Disposable {
 
             const buildFolder = path.dirname(query.circuit.buildPath.fsPath);
             query.outputPath = vscode.Uri.parse(
-              path.join(buildFolder, query.name, "output.json"),
+              path.join(buildFolder, query.name, "proven.json"),
             );
 
             stateStore.updateState(query.circuit);

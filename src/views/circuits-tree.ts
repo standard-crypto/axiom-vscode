@@ -20,30 +20,6 @@ class CircuitTreeItem extends vscode.TreeItem {
   }
 }
 
-class CircuitDefaultInputFileTreeItem extends vscode.TreeItem {
-  constructor(
-    private circuit: Circuit,
-    private inputPath?: vscode.Uri | undefined,
-  ) {
-    super("Default Input: ");
-    this.command = {
-      title: "Show Source",
-      command: COMMAND_ID_SHOW_SOURCE,
-      arguments: [{ path: inputPath }],
-    };
-    this.contextValue = "defaultInputFile";
-    if (circuit.defaultInputs === undefined) {
-      this.description = "[unset]";
-    } else {
-      this.description = vscode.workspace.asRelativePath(
-        circuit.defaultInputs.path,
-      );
-    }
-    this.tooltip =
-      "A JSON file containing the default input values to use for this circuit";
-  }
-}
-
 class QueryHeaderItem extends vscode.TreeItem {
   constructor(
     private queries: Query[],
@@ -123,7 +99,6 @@ class CallbackExtraDataTreeItem extends vscode.TreeItem {
 
 type TreeElem =
   | Circuit
-  | { inputPath: vscode.Uri | undefined; circuit: Circuit }
   | { query: Query; circuit: Circuit }
   | { queries: Query[]; circuit: Circuit }
   | {
@@ -163,11 +138,6 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
         element.queries as Query[],
         element.circuit as Circuit,
       );
-    } else if ("inputPath" in element && "circuit" in element) {
-      return new CircuitDefaultInputFileTreeItem(
-        element.circuit,
-        element.inputPath,
-      );
     } else {
       return new QueryTreeItem(element.query, element.circuit);
     }
@@ -182,13 +152,10 @@ class CircuitsDataProvider implements vscode.TreeDataProvider<TreeElem> {
       return state.circuits;
     }
 
-    // Parent is a Circuit -> return Default Input and Queries
+    // Parent is a Circuit -> return and Queries
     else if (parent instanceof Circuit) {
       const config = vscode.workspace.getConfiguration("axiom");
-      return [
-        { inputPath: parent.defaultInputs, circuit: parent },
-        { queries: parent.queries, circuit: parent },
-      ];
+      return [{ queries: parent.queries, circuit: parent }];
     }
 
     // Parent is a list of Queries -> return a single Query

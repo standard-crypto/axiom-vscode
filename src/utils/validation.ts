@@ -11,9 +11,10 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
 import {
+  COMMAND_ID_SHOW_SOURCE,
   COMMAND_ID_TRIGGER_COMPILE,
-  COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
 } from "../commands";
+import { exportsDefaultInputs } from "./tsCompiler";
 
 export async function getConfigValueOrShowError(
   keyName: string,
@@ -148,20 +149,18 @@ export function assertQueryIsValid(
 }
 
 export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
-  if (circuit.defaultInputs === undefined) {
+  const circuitPath = circuit.source.filePath;
+  if (!exportsDefaultInputs(circuit.source.filePath)) {
     vscode.window
       .showErrorMessage(
-        "No default inputs found for this circuit",
+        "No default inputs found in the circuit file",
         "Set default inputs",
       )
       .then((choice) => {
         if (choice === "Set default inputs") {
-          vscode.commands.executeCommand(
-            COMMAND_ID_UPDATE_CIRCUIT_DEFAULT_INPUT,
-            {
-              circuit,
-            },
-          );
+          vscode.commands.executeCommand(COMMAND_ID_SHOW_SOURCE, {
+            circuitPath,
+          });
         }
       });
     return false;
