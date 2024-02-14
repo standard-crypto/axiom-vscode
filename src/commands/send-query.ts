@@ -58,6 +58,8 @@ export class SendQuery implements vscode.Disposable {
             version: "v2", // TODO: receive from config
           });
 
+          let queryId: string | undefined;
+
           await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Notification,
@@ -177,28 +179,50 @@ export class SendQuery implements vscode.Disposable {
               // done
               progress.report({
                 increment: 100,
-                message: `Query Sent`,
+                message: `Query sent successfully`,
               });
-
-              // wait 10 seconds before showing explorer link
-              await new Promise((resolve) => {
-                setTimeout(resolve, 10000);
-              });
-
-              vscode.window
-                .showInformationMessage(
-                  `Query submitted successfully`,
-                  "View Transaction on Axiom Explorer",
-                )
-                .then(async (choice) => {
-                  if (choice === "View Transaction on Axiom Explorer") {
-                    vscode.env.openExternal(
-                      vscode.Uri.parse(axiomExplorerUrl + sendQuery.queryId),
-                    );
-                  }
-                });
+              queryId = sendQuery.queryId;
             },
           );
+          if (queryId !== undefined) {
+            await vscode.window.withProgress(
+              {
+                location: vscode.ProgressLocation.Notification,
+                title: "Axiom",
+                cancellable: false,
+              },
+              async (progress) => {
+                // wait 10s to display explorer link
+                for (let i = 0; i < 99; i++) {
+                  await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                    progress.report({
+                      increment: 1,
+                      message: "Fetching Explorer link...",
+                    });
+                  });
+                }
+                // done
+                progress.report({
+                  increment: 100,
+                  message: `Explorer Link is ready`,
+                });
+
+                vscode.window
+                  .showInformationMessage(
+                    `Explorer Link is ready`,
+                    "View Transaction on Axiom Explorer",
+                  )
+                  .then(async (choice) => {
+                    if (choice === "View Transaction on Axiom Explorer") {
+                      vscode.env.openExternal(
+                        vscode.Uri.parse(axiomExplorerUrl + queryId),
+                      );
+                    }
+                  });
+              },
+            );
+          }
         },
       ),
     );
