@@ -11,6 +11,7 @@ import {
 } from "../utils/validation";
 import { CONFIG_KEYS, axiomExplorerUrl } from "../config";
 import { readJsonFromFile, abbreviateAddr, updateQueryOutput } from "../utils";
+import { proveAndCheck } from "./prove";
 
 export const COMMAND_ID_SEND_QUERY = "axiom-crypto.send-query";
 
@@ -69,15 +70,18 @@ export class SendQuery implements vscode.Disposable {
             async (progress) => {
               // run the query
               progress.report({ increment: 0, message: "Proving circuit..." });
-              await prove(
-                query.circuit.buildPath.fsPath,
-                query.inputPath.fsPath,
-                {
-                  stats: false,
-                  outputs: query.outputPath.fsPath,
-                  provider: provider,
-                },
-              );
+              if (!(await proveAndCheck(provider, query))) {
+                return;
+              }
+              // await prove(
+              //   query.circuit.buildPath.fsPath,
+              //   query.inputPath.fsPath,
+              //   {
+              //     stats: false,
+              //     outputs: query.outputPath.fsPath,
+              //     provider: provider,
+              //   },
+              // );
 
               // submit the query
               progress.report({
