@@ -1,6 +1,6 @@
 # Axiom-VScode
 
-A VS code extension designed for [Axiom](https://www.axiom.xyz/). You can use this extension to compile a circuit and run & send queries.
+A VS code extension designed for [Axiom](https://www.axiom.xyz/). You can use this extension to compile a circuit and prove & send queries.
 
 ## Features
 
@@ -12,7 +12,7 @@ Circuits are loaded from a specified location using a customizable glob pattern 
 
 #### Compile a Circuit
 
-Compilation requires that the default input be set in the circuit file. 
+Compilation requires that the `defaultInputs` be exported from the circuit file. 
 
 The output will be written to the directory set in the [extension settings](#extension-settings).
 
@@ -25,9 +25,9 @@ Queries are managed by Axiom-VScode and saved to the VS code workspace state.
 #### Add a query
 <img src="media/addQueryExample.gif" width="500" />
 
-#### Running queries
+#### Proving queries
 
-You must compile the circuit and set the query input before running.
+You must compile the circuit and set the query input file before proving.
 
 You must also set `PROVIDER_URI_SEPOLIA` in the config file defined in the [extension settings](#extension-settings).
 
