@@ -73,15 +73,6 @@ export class SendQuery implements vscode.Disposable {
               if (!(await proveAndCheck(provider, query))) {
                 return;
               }
-              // await prove(
-              //   query.circuit.buildPath.fsPath,
-              //   query.inputPath.fsPath,
-              //   {
-              //     stats: false,
-              //     outputs: query.outputPath.fsPath,
-              //     provider: provider,
-              //   },
-              // );
 
               // submit the query
               progress.report({
