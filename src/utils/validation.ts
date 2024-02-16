@@ -167,3 +167,46 @@ export function assertCircuitCanBeCompiled(circuit: Circuit): boolean {
   }
   return true;
 }
+
+export function assertQueryWasProven(query: Query): boolean {
+  if (vscode.workspace.workspaceFolders === undefined) {
+    throw new Error("Expected at least one open VSCode workspace");
+  }
+  if (fs.existsSync(query.outputPath.fsPath)) {
+    const fileStats = fs.statSync(query.outputPath.fsPath);
+    const modifiedTime = fileStats.mtime;
+
+    // proven.json file was modified less than 1 second ago
+    if (new Date().getTime() - modifiedTime.getTime() < 1000) {
+      return true;
+    }
+  }
+  if (query.inputPath === undefined) {
+    throw new Error("Query input file is not set");
+  }
+
+  const relativeInputPath = vscode.workspace.asRelativePath(query.inputPath);
+
+  vscode.window
+    .showErrorMessage(
+      `Unable to prove query with input file ${relativeInputPath}`,
+      "View Query Inputs",
+      "Change Query Inputs file",
+    )
+    .then(async (choice) => {
+      if (choice === "View Query Inputs") {
+        if (query.inputPath === undefined) {
+          throw new Error("Query input file is not set");
+        }
+        const document = await vscode.workspace.openTextDocument(
+          query.inputPath.fsPath,
+        );
+        await vscode.window.showTextDocument(document);
+      } else if (choice === "Change Query Inputs file") {
+        vscode.commands.executeCommand(COMMAND_ID_UPDATE_QUERY_INPUT, {
+          query,
+        });
+      }
+    });
+  return false;
+}
