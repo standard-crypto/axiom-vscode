@@ -11,7 +11,7 @@
   "bugs": {
 		"url": "https://github.com/standard-crypto/axiom-vscode/issues"
 	},
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.84.0"
   },
