@@ -2,12 +2,16 @@
   "publisher": "standard-crypto",
   "name": "axiom-crypto",
   "displayName": "Axiom Crypto",
-  "description": "Support for projects built with Axiom, the ZK Coprocessor for Ethereum (https://axiom.xyz)",
+  "description": "Support for projects built with Axiom.",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/standard-crypto/axiom-vscode.git"
   },
-  "version": "0.0.3",
+  "bugs": {
+		"url": "https://github.com/standard-crypto/axiom-vscode/issues"
+	},
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.84.0"
   },
@@ -185,6 +189,7 @@
   "scripts": {
     "vscode:prepublish": "yarn run recompile",
     "vscode:package": "vsce package",
+    "vscode:publish": "vsce publish",
     "compile": "tsc -p ./",
     "recompile": "rm -Rf out && yarn compile",
     "watch": "tsc -watch -p ./",
