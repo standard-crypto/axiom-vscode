@@ -50,7 +50,7 @@ yarn install
 yarn compile
 ```
 
-## Running the Extension
+## Running/Debugging the Extension
 
 Run the extension by using the `Run and Debug` tab in VS code. This will create a new VS code window where you can open a new workspace folder. Use the [axiom-quickstart](https://github.com/axiom-crypto/axiom-quickstart) project for testing.
 
