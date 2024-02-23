@@ -16,14 +16,14 @@ Compilation requires that the `defaultInputs` be exported from the circuit file.
 
 The output will be written to the directory set in the [extension settings](#extension-settings).
 
-<img src="https://github.com/standard-crypto/axiom-vscode/blob/5bced67af7342c8ba9f242a306618411a5116d0a/media/compileCircuitExample.gif" width="500" />
+<img src="media/compileCircuitExample.gif" width="500" />
 
 ### Managing Queries
 
 Queries are managed by Axiom-VScode and saved to the VS code workspace state. 
 
 #### Add a query
-<img src="https://github.com/standard-crypto/axiom-vscode/blob/5bced67af7342c8ba9f242a306618411a5116d0a/media/addQueryExample.gif" width="500" />
+<img src="media/addQueryExample.gif" width="500" />
 
 #### Proving queries
 
@@ -31,7 +31,7 @@ You must compile the circuit and set the query input file before proving.
 
 You must also set `PROVIDER_URI_SEPOLIA` in the config file defined in the [extension settings](#extension-settings).
 
-<img src="https://github.com/standard-crypto/axiom-vscode/blob/5bced67af7342c8ba9f242a306618411a5116d0a/media/proveQueryExample.gif" width="500" />
+<img src="media/proveQueryExample.gif" width="500" />
 
 #### Sending queries
 
@@ -39,7 +39,7 @@ You must set the callback address before sending.
 
 You must also set `PRIVATE_KEY_SEPOLIA` in the config file defined in the [extension settings](#extension-settings).
 
-<img src="https://github.com/standard-crypto/axiom-vscode/blob/5bced67af7342c8ba9f242a306618411a5116d0a/media/sendQueryExample.gif" width="500" />
+<img src="media/sendQueryExample.gif" width="500" />
 
 ## Setup
 
