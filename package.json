@@ -211,9 +211,9 @@
     "prettier": "^3.1.1"
   },
   "dependencies": {
-    "@axiom-crypto/circuit": "^2.0.4",
-    "@axiom-crypto/client": "^2.0.4",
-    "@axiom-crypto/core": "^2.3.5",
+    "@axiom-crypto/circuit": "2.0.8",
+    "@axiom-crypto/client": "2.0.8",
+    "@axiom-crypto/core": "2.3.8",
     "dotenv": "^16.3.1",
     "ethers": "^6.9.0",
     "type-fest": "^4.10.2",

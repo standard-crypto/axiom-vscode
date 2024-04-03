@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { buildSendQuery } from "@axiom-crypto/client";
 import { AxiomSdkCore } from "@axiom-crypto/core";
-import { prove } from "@axiom-crypto/circuit/cliHandler";
 import type { Query } from "../models/query";
 import { JsonRpcProvider, Transaction, Wallet, ethers } from "ethers";
 import {
@@ -96,7 +95,6 @@ export class SendQuery implements vscode.Disposable {
                 options: {
                   refundee: query.refundAddress ?? sender,
                   caller: sender,
-                  privateKey: privateKey,
                   //   maxFeePerGas: options.maxFeePerGas,
                   //   callbackGasLimit: options.callbackGasLimit,
                 },

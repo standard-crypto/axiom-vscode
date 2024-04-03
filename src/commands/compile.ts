@@ -55,7 +55,7 @@ export async function compileCircuit(circuit: Circuit) {
     return;
   }
 
-  await vscode.window.withProgress(
+  const progress = vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
       title: "Axiom",
@@ -76,6 +76,28 @@ export async function compileCircuit(circuit: Circuit) {
     },
   );
 
+  try {
+    await progress;
+  } catch (e: any) {
+    let message: string = '';
+    if ('message' in e) {
+      message = `: ${e.message}`;
+    }
+    vscode.window.showErrorMessage(
+      `Compilation failed: '${e.message}'`,
+      'Go to source',
+    ).then(async (choice) => {
+      if (choice === "Go to source") {
+        const document = await vscode.workspace.openTextDocument(
+          circuit.source.filePath,
+        );
+        await vscode.window.showTextDocument(document);        
+      }
+    });
+
+    return;
+  }
+
   vscode.window
     .showInformationMessage(
       `Compiled to ${vscode.workspace.asRelativePath(circuit.buildPath)}`,
@@ -86,7 +108,7 @@ export async function compileCircuit(circuit: Circuit) {
         const document = await vscode.workspace.openTextDocument(
           circuit.buildPath,
         );
-        const editor = await vscode.window.showTextDocument(document);
+        await vscode.window.showTextDocument(document);
       }
     });
 }
