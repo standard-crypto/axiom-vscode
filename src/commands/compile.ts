@@ -84,7 +84,7 @@ export async function compileCircuit(circuit: Circuit) {
       message = `: ${e.message}`;
     }
     vscode.window.showErrorMessage(
-      `Compilation failed: '${e.message}'`,
+      `Compilation failed'${message}'`,
       'Go to source',
     ).then(async (choice) => {
       if (choice === "Go to source") {
